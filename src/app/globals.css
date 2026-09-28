@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 60 9.1% 97.8%; /* stone-50 */
+    --foreground: 20 14.3% 4.1%; /* stone-900 */
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+    
+    /* Authentic warm red for heritage feel */
+    --primary: 0 72% 42%; 
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 60 4.8% 95.9%; /* stone-100 */
+    --secondary-foreground: 24 9.8% 10%; /* stone-950 */
+    
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%; /* stone-500 */
+    
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    
+    --border: 20 5.9% 90%; /* stone-200 */
+    --input: 20 5.9% 90%;
+    --ring: 0 72% 42%; /* primary red */
+    --radius: 0.25rem; /* Slight radius, not overly rounded */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  
+  /* Focus outlines for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+}
