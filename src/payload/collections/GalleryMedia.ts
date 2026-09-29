@@ -27,7 +27,6 @@ export const GalleryMedia: CollectionConfig = {
     },
   ],
   upload: {
-    adminThumbnail: 'thumbnail',
     mimeTypes: ['image/*'],
     imageSizes: [
       { name: 'thumbnail', width: 400, height: 300, position: 'centre' },

@@ -20,7 +20,6 @@ export const ActivityMedia: CollectionConfig = {
     beforeDelete: [preventDeleteUsedMedia('activity-media')],
   },
   upload: {
-    adminThumbnail: 'thumbnail',
     mimeTypes: ['image/*'],
     imageSizes: [
       { name: 'thumbnail', width: 400, height: 300, position: 'centre' },

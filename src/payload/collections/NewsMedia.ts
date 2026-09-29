@@ -20,7 +20,6 @@ export const NewsMedia: CollectionConfig = {
     beforeDelete: [preventDeleteUsedMedia('news-media')],
   },
   upload: {
-    adminThumbnail: 'thumbnail',
     mimeTypes: ['image/*'],
     imageSizes: [
       { name: 'thumbnail', width: 400, height: 300, position: 'centre' },
