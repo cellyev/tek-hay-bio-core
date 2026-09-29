@@ -1,5 +1,33 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '../access/roles'
+import { slugField } from '../../lib/slug/slugField'
+
+import {
+  lexicalEditor,
+  AlignFeature,
+  BlockquoteFeature,
+  BlocksFeature,
+  CodeBlock,
+  BoldFeature,
+  ChecklistFeature,
+  FixedToolbarFeature,
+  HeadingFeature,
+  HorizontalRuleFeature,
+  IndentFeature,
+  InlineCodeFeature,
+  ItalicFeature,
+  LinkFeature,
+  OrderedListFeature,
+  ParagraphFeature,
+  StrikethroughFeature,
+  SubscriptFeature,
+  SuperscriptFeature,
+  UnderlineFeature,
+  UnorderedListFeature,
+  UploadFeature,
+} from '@payloadcms/richtext-lexical'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -23,15 +51,7 @@ export const Posts: CollectionConfig = {
       required: true,
       localized: true,
     },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      localized: true,
-      admin: {
-        position: 'sidebar',
-      },
-    },
+    slugField(),
     {
       name: 'excerpt',
       type: 'textarea',
@@ -41,6 +61,52 @@ export const Posts: CollectionConfig = {
       name: 'content',
       type: 'richText',
       localized: true,
+      editor: lexicalEditor({
+        features: () => [
+          ParagraphFeature(),
+          HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }),
+          BoldFeature(),
+          ItalicFeature(),
+          UnderlineFeature(),
+          StrikethroughFeature(),
+          SubscriptFeature(),
+          SuperscriptFeature(),
+          InlineCodeFeature(),
+          AlignFeature(),
+          IndentFeature(),
+          UnorderedListFeature(),
+          OrderedListFeature(),
+          ChecklistFeature(),
+          LinkFeature(),
+          BlockquoteFeature(),
+          HorizontalRuleFeature(),
+          BlocksFeature({ blocks: [CodeBlock()] }),
+          UploadFeature({
+            collections: {
+              'news-media': {
+                fields: [
+                  {
+                    name: 'caption',
+                    type: 'text',
+                  },
+                  {
+                    name: 'alignment',
+                    type: 'select',
+                    options: [
+                      { label: 'Left', value: 'left' },
+                      { label: 'Center', value: 'center' },
+                      { label: 'Right', value: 'right' },
+                      { label: 'Full Width', value: 'full' },
+                    ],
+                    defaultValue: 'center',
+                  },
+                ],
+              },
+            },
+          }),
+          FixedToolbarFeature(),
+        ],
+      }),
     },
     {
       name: 'category',
@@ -67,11 +133,12 @@ export const Posts: CollectionConfig = {
     {
       name: 'featuredImage',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'news-media',
       admin: {
         position: 'sidebar',
       },
     },
+    
     {
       name: 'status',
       type: 'select',
@@ -91,7 +158,7 @@ export const Posts: CollectionConfig = {
       fields: [
         { name: 'metaTitle', type: 'text' },
         { name: 'metaDescription', type: 'textarea' },
-        { name: 'image', type: 'upload', relationTo: 'media' },
+        { name: 'image', type: 'upload', relationTo: 'news-media' },
         { name: 'noIndex', type: 'checkbox', defaultValue: false },
       ],
     },

@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveActivityAction, deleteActivityAction } from '@/app/(admin)/admin/kegiatan/actions'
 import { LexicalEditor } from '@/components/admin/LexicalEditor'
+import { MediaPicker } from '@/components/admin/MediaPicker'
 
 export function ActivitiesForm({ initialData }: { initialData?: any }) {
   const router = useRouter()
@@ -19,7 +22,8 @@ export function ActivitiesForm({ initialData }: { initialData?: any }) {
     date: initialData?.date ? new Date(initialData.date).toISOString().slice(0, 16) : '',
     location: initialData?.location || '',
     status: initialData?.status || 'draft',
-  })
+    featuredImage: initialData?.featuredImage || null,
+    })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -33,8 +37,8 @@ export function ActivitiesForm({ initialData }: { initialData?: any }) {
     const submitData = {
       ...formData,
       date: formData.date ? new Date(formData.date).toISOString() : null,
-    }
-    
+    };
+    if (submitData.featuredImage && submitData.featuredImage.id) submitData.featuredImage = submitData.featuredImage.id;
     const res = await saveActivityAction(initialData?.id || null, submitData)
     
     setIsSaving(false)
@@ -83,8 +87,9 @@ export function ActivitiesForm({ initialData }: { initialData?: any }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Slug URL</label>
+              <div className="text-xs text-slate-500 mb-2">Kosongkan untuk membuat slug otomatis dari judul. Anda dapat mengubahnya jika diperlukan.</div>
               <input 
-                required
+                
                 type="text" 
                 name="slug"
                 value={formData.slug}
@@ -116,6 +121,7 @@ export function ActivitiesForm({ initialData }: { initialData?: any }) {
           <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
             <h3 className="font-semibold text-slate-900">Konten Kegiatan</h3>
             <LexicalEditor 
+              mediaCollection="activity-media"
               initialData={initialData?.description} 
               onChange={(json) => setFormData(prev => ({ ...prev, description: json as any }))} 
             />
@@ -123,6 +129,16 @@ export function ActivitiesForm({ initialData }: { initialData?: any }) {
         </div>
 
         <div className="space-y-6">
+          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+            <h3 className="font-semibold text-slate-900">Featured Image</h3>
+            <MediaPicker 
+              mediaCollection="activity-media"
+              value={formData.featuredImage} 
+              onChange={(val) => setFormData(prev => ({ ...prev, featuredImage: val }))} 
+            />
+          </div>
+          
+
           <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
             <h3 className="font-semibold text-slate-900">Publikasi & Waktu</h3>
             

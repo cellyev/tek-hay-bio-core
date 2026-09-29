@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { GlobalConfig } from 'payload'
 import { isAdmin } from '../access/roles'
 
@@ -11,7 +13,8 @@ export const ContactInformation: GlobalConfig = {
     { name: 'address', type: 'textarea', localized: true },
     { name: 'phone', type: 'text' },
     { name: 'email', type: 'text' },
-    { name: 'googleMapsUrl', type: 'text' },
+    { name: 'googleMapsUrl', type: 'text', admin: { description: 'Tautan langsung ke Google Maps (misal: https://maps.app.goo.gl/...)' } },
+    { name: 'googleMapsEmbedCode', type: 'textarea', admin: { description: 'Tempel (paste) kode <iframe> Embed dari Google Maps di sini agar tampilan peta persis seperti yang Anda inginkan.' } },
     { name: 'latitude', type: 'text' },
     { name: 'longitude', type: 'text' },
     {

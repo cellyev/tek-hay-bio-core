@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import type { CMSRecord } from '@/types'
 
@@ -16,11 +16,11 @@ export async function getGlobal(slug: 'history' | 'site-settings' | 'contact-inf
   }
 }
 
-export async function getCollection(collection: 'posts' | 'activities' | 'services' | 'media', locale: 'id' | 'en', query = {}): Promise<CMSRecord[]> {
+export async function getCollection(collection: 'posts' | 'activities' | 'services' | 'media' | 'gallery-media', locale: 'id' | 'en', query = {}): Promise<CMSRecord[]> {
   try {
     const payload = await getPayload({ config: configPromise })
     const data = await payload.find({
-      collection: collection as 'posts' | 'activities' | 'services' | 'media',
+      collection: collection as 'posts' | 'activities' | 'services' | 'media' | 'gallery-media',
       locale,
       ...query
     })

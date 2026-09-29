@@ -64,19 +64,19 @@ export async function ContactPage({ locale }: { locale: 'id' | 'en' }) {
                 <div className="space-y-4">
                   {Boolean(contactInfo.phone) && (
                     <p className="text-lg text-stone-600 flex items-center gap-3">
-                      <span className="font-bold w-16">Telepon</span>
+                      <span className="font-bold w-24">Telepon</span>
                       <a href={`tel:${contactInfo.phone as string}`} className="hover:text-primary transition-colors">{contactInfo.phone as string}</a>
                     </p>
                   )}
                   {Boolean(contactInfo.email) && (
                     <p className="text-lg text-stone-600 flex items-center gap-3">
-                      <span className="font-bold w-16">Email</span>
+                      <span className="font-bold w-24">Email</span>
                       <a href={`mailto:${contactInfo.email as string}`} className="hover:text-primary transition-colors">{contactInfo.email as string}</a>
                     </p>
                   )}
                   {socialMedia.map((social: Record<string, unknown>, idx: number) => (
                     <p key={idx} className="text-lg text-stone-600 flex items-center gap-3">
-                      <span className="font-bold w-16 capitalize">{social.platform as string}</span>
+                      <span className="font-bold w-24 capitalize">{social.platform as string}</span>
                       <a href={social.url as string} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors text-primary">
                         {social.label as string}
                       </a>
@@ -87,20 +87,35 @@ export async function ContactPage({ locale }: { locale: 'id' | 'en' }) {
             </div>
 
             <div className="bg-stone-100 rounded-2xl overflow-hidden border border-stone-200 min-h-[400px] relative">
-              <div className="absolute inset-0 flex items-center justify-center p-8 text-center text-stone-500 bg-[url('/file.svg')] bg-center bg-no-repeat bg-[length:100px_100px] opacity-10">
-                <span className="sr-only">Map Graphic</span>
+                            <div className="absolute inset-0 z-0">
+                {Boolean(contactInfo.googleMapsEmbedCode) ? (
+                  <div 
+                    className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-none" 
+                    dangerouslySetInnerHTML={{ __html: contactInfo.googleMapsEmbedCode as string }} 
+                  />
+                ) : Boolean(contactInfo.latitude && contactInfo.longitude) ? (
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    frameBorder="0" 
+                    scrolling="no" 
+                    marginHeight={0} 
+                    marginWidth={0} 
+                    src={`https://maps.google.com/maps?q=${contactInfo.latitude},${contactInfo.longitude}&z=18&output=embed&iwloc=`}
+                  />
+                ) : (
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    frameBorder="0" 
+                    scrolling="no" 
+                    marginHeight={0} 
+                    marginWidth={0} 
+                    src="https://maps.google.com/maps?q=Klenteng%20Tek%20Hay%20Bio,%20Semarang&z=18&output=embed&iwloc="
+                  />
+                )}
               </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                 <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-stone-200 text-center max-w-xs">
-                   <h3 className="font-serif font-bold text-xl text-stone-900 mb-2">Peta Lokasi</h3>
-                   <p className="text-stone-600 text-sm mb-4">Integrasi Google Maps Embed dapat diletakkan di sini.</p>
-                   {Boolean(contactInfo.googleMapsUrl) && (
-                     <Button href={contactInfo.googleMapsUrl as string} variant="primary" className="w-full">
-                       Navigasi
-                     </Button>
-                   )}
-                 </div>
-              </div>
+              
             </div>
 
           </div>

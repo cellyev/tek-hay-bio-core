@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import { getHomepageData } from '@/modules/home/queries'
 import { Hero, Introduction } from '@/components/blocks/HomeHero'
 import { ShortHistory, Uniqueness } from '@/components/blocks/HomeHistory'

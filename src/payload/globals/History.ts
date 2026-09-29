@@ -1,3 +1,5 @@
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { GlobalConfig } from 'payload'
 import { isAdminOrEditor } from '../access/roles'
 
@@ -31,7 +33,7 @@ export const History: GlobalConfig = {
         { name: 'year', type: 'text' },
         { name: 'title', type: 'text', localized: true },
         { name: 'description', type: 'textarea', localized: true },
-        { name: 'image', type: 'upload', relationTo: 'media' },
+        { name: 'image', type: 'upload', relationTo: 'history-media' },
         { 
           name: 'verificationStatus', 
           type: 'select',

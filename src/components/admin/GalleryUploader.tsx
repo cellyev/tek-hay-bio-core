@@ -1,10 +1,12 @@
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { updateMediaAction } from "@/app/(admin)/admin/galeri/actions";
 
-export function GalleryUploader({ initialMedia }: { initialMedia: any[] }) {
+export function GalleryUploader({ initialMedia, collection = "gallery-media" }: { initialMedia: any[], collection?: string }) {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
@@ -12,6 +14,7 @@ export function GalleryUploader({ initialMedia }: { initialMedia: any[] }) {
 
   const [editingMedia, setEditingMedia] = useState<any | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [usageStatus, setUsageStatus] = useState<any>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -25,7 +28,7 @@ export function GalleryUploader({ initialMedia }: { initialMedia: any[] }) {
     formData.append("alt", file.name);
 
     try {
-      const res = await fetch("/api/media", {
+      const res = await fetch(`/api/${collection}`, {
         method: "POST",
         body: formData,
       });
@@ -62,11 +65,11 @@ export function GalleryUploader({ initialMedia }: { initialMedia: any[] }) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Hapus media ini? Tindakan ini tidak dapat dibatalkan."))
+    if (!confirm("Hapus gambar?\n\nGambar ini belum digunakan oleh konten apa pun.\n\nTindakan ini akan menghapus gambar secara permanen."))
       return;
 
     try {
-      const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/${collection}/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Gagal menghapus");
       setEditingMedia(null);
       router.refresh();
@@ -80,7 +83,7 @@ export function GalleryUploader({ initialMedia }: { initialMedia: any[] }) {
     if (!editingMedia) return;
     setIsSaving(true);
 
-    const res = await updateMediaAction(editingMedia.id, {
+    const res = await updateMediaAction(editingMedia.id, collection, {
       alt: editingMedia.alt,
       title: editingMedia.title,
       description: editingMedia.description,
@@ -246,17 +249,12 @@ export function GalleryUploader({ initialMedia }: { initialMedia: any[] }) {
             />
             <div className="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 gap-2">
               <button
-                onClick={() => setEditingMedia(media)}
+                onClick={() => { setEditingMedia(media); setUsageStatus(null); fetch(`/api/media-usage?collection=${collection}&id=${media.id}`).then(r => r.json()).then(setUsageStatus).catch(console.error); }}
                 className="px-3 py-1.5 bg-white text-slate-900 text-xs font-medium rounded-md hover:bg-slate-100 w-full"
               >
                 Edit
               </button>
-              <button
-                onClick={() => handleDelete(media.id)}
-                className="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-md hover:bg-red-700 w-full"
-              >
-                Hapus
-              </button>
+              
             </div>
           </div>
         ))}

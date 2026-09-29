@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { getCollection } from "./queries";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Container, Section } from "@/components/ui/Layout";
@@ -6,7 +6,7 @@ import { MediaImage } from "@/components/ui/MediaImage";
 
 export async function GalleryPage({ locale }: { locale: "id" | "en" }) {
   // Fetch all media
-  const mediaList = await getCollection("media", locale, {
+  const mediaList = await getCollection("gallery-media", locale, {
     sort: "-updatedAt",
   });
 

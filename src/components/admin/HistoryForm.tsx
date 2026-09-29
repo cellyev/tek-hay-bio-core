@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveGlobalAction } from '@/app/(admin)/admin/actions'
 import { LexicalEditor } from '@/components/admin/LexicalEditor'
+import { MediaPicker } from '@/components/admin/MediaPicker'
 
 export function HistoryForm({ initialData }: { initialData?: any }) {
   const router = useRouter()
@@ -99,6 +102,7 @@ export function HistoryForm({ initialData }: { initialData?: any }) {
       <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
         <h3 className="font-semibold text-slate-900">Sejarah Lengkap</h3>
         <LexicalEditor 
+          mediaCollection="history-media"
           initialData={formData.content} 
           onChange={(json) => setFormData(prev => ({ ...prev, content: json }))} 
         />
@@ -130,6 +134,14 @@ export function HistoryForm({ initialData }: { initialData?: any }) {
                        <option value="verified">Verified</option>
                        <option value="under_research">Under Research</option>
                      </select>
+                   </div>
+                   <div className="md:col-span-2">
+                     <label className="block text-sm font-medium text-slate-700 mb-1">Gambar Momen</label>
+                     <MediaPicker 
+                       mediaCollection="history-media"
+                       value={item.image} 
+                       onChange={(val) => handleTimelineChange(i, 'image', val)} 
+                     />
                    </div>
                    <div className="md:col-span-2">
                      <label className="block text-sm font-medium text-slate-700 mb-1">Judul Peristiwa</label>

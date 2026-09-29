@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
         pathname: "/api/media/file/**",
       },
       {
+        protocol: "https",
+        hostname: "zz3owivpclim5dxf.public.blob.vercel-storage.com",
+      },
+      {
         protocol: "http",
         hostname: "localhost",
       },

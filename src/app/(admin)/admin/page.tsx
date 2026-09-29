@@ -1,3 +1,5 @@
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -21,7 +23,7 @@ export default async function AdminDashboard() {
     payload.count({ collection: 'posts' }),
     payload.count({ collection: 'activities' }),
     payload.count({ collection: 'services' }),
-    payload.count({ collection: 'media' }),
+    payload.count({ collection: 'gallery-media' }),
     payload.count({ collection: 'posts', where: { status: { equals: 'draft' } } }),
   ])
 

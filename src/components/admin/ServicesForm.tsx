@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveServiceAction, deleteServiceAction } from '@/app/(admin)/admin/layanan/actions'
 import { LexicalEditor } from '@/components/admin/LexicalEditor'
+import { MediaPicker } from '@/components/admin/MediaPicker'
 
 export function ServicesForm({ initialData }: { initialData?: any }) {
   const router = useRouter()
@@ -16,6 +19,7 @@ export function ServicesForm({ initialData }: { initialData?: any }) {
     slug: initialData?.slug || '',
     shortDescription: initialData?.shortDescription || '',
     description: initialData?.description || null,
+    image: initialData?.image || null,
     status: initialData?.status || 'draft',
   })
 
@@ -28,7 +32,9 @@ export function ServicesForm({ initialData }: { initialData?: any }) {
     setIsSaving(true)
     setError('')
     
-    const res = await saveServiceAction(initialData?.id || null, formData)
+    const submitData = { ...formData };
+    if (submitData.image && submitData.image.id) submitData.image = submitData.image.id;
+    const res = await saveServiceAction(initialData?.id || null, submitData)
     
     setIsSaving(false)
     if (res.success) {
@@ -76,8 +82,8 @@ export function ServicesForm({ initialData }: { initialData?: any }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Slug URL</label>
-              <input 
-                required
+              <div className="text-xs text-slate-500 mb-2">Kosongkan untuk membuat slug otomatis dari judul. Anda dapat mengubahnya jika diperlukan.</div>
+              <input
                 type="text" 
                 name="slug"
                 value={formData.slug}
@@ -99,6 +105,7 @@ export function ServicesForm({ initialData }: { initialData?: any }) {
           <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
             <h3 className="font-semibold text-slate-900">Deskripsi Lengkap</h3>
             <LexicalEditor 
+              mediaCollection="service-media"
               initialData={initialData?.description} 
               onChange={(json) => setFormData(prev => ({ ...prev, description: json as any }))} 
             />
@@ -106,6 +113,17 @@ export function ServicesForm({ initialData }: { initialData?: any }) {
         </div>
 
         <div className="space-y-6">
+                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+            <h3 className="font-semibold text-slate-900">Featured Image</h3>
+            <MediaPicker 
+              mediaCollection="service-media"
+              value={formData.image} 
+              onChange={(val) => setFormData(prev => ({ ...prev, image: val }))} 
+            />
+          </div>
+
+          
+
           <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
             <h3 className="font-semibold text-slate-900">Publikasi</h3>
             

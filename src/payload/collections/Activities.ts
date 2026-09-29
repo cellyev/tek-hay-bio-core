@@ -1,5 +1,8 @@
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '../access/roles'
+import { slugField } from '../../lib/slug/slugField'
 
 export const Activities: CollectionConfig = {
   slug: 'activities',
@@ -23,15 +26,7 @@ export const Activities: CollectionConfig = {
       required: true,
       localized: true,
     },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      localized: true,
-      admin: {
-        position: 'sidebar',
-      },
-    },
+    slugField(),
     {
       name: 'shortDescription',
       type: 'textarea',
@@ -60,22 +55,12 @@ export const Activities: CollectionConfig = {
     {
       name: 'featuredImage',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'activity-media',
       admin: {
         position: 'sidebar',
       },
     },
-    {
-      name: 'gallery',
-      type: 'array',
-      fields: [
-        {
-          name: 'image',
-          type: 'upload',
-          relationTo: 'media',
-        },
-      ],
-    },
+    
     {
       name: 'status',
       type: 'select',
@@ -95,7 +80,7 @@ export const Activities: CollectionConfig = {
       fields: [
         { name: 'metaTitle', type: 'text' },
         { name: 'metaDescription', type: 'textarea' },
-        { name: 'image', type: 'upload', relationTo: 'media' },
+        { name: 'image', type: 'upload', relationTo: 'activity-media' },
         { name: 'noIndex', type: 'checkbox', defaultValue: false },
       ],
     },

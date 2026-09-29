@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -60,8 +62,11 @@ export default async function PenggunaPage() {
             ))}
           </tbody>
         </table>
-        <div className="p-4 border-t border-slate-200 bg-slate-50">
-          <p className="text-sm text-slate-600">Pembuatan pengguna baru melalui Custom Admin sedang dalam pengembangan.</p>
+        <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+          <p className="text-sm text-slate-600">Pembuatan pengguna baru dapat dilakukan melalui Payload Admin.</p>
+          <Link href="/admin-payload/collections/users/create" className="text-sm font-medium text-blue-600 hover:underline">
+            Tambah Pengguna &rarr;
+          </Link>
         </div>
       </div>
     </div>

@@ -21,5 +21,5 @@ export default async function EditActivityPage({ params }: { params: Promise<{ i
         <ActivitiesForm initialData={data} />
       </div>
     )
-  } catch (error) { notFound() }
+  } catch { notFound() }
 }

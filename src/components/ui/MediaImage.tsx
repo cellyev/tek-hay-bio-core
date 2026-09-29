@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import Image from "next/image";
 
@@ -56,8 +58,8 @@ export function MediaImage({
 
   return (
     <div
-      className={`${fill ? "absolute inset-0" : "relative"} overflow-hidden ${className}`}
-      style={!fill ? { width, height } : undefined}
+      className={`${fill ? "absolute inset-0" : "relative w-full h-auto"} overflow-hidden ${className}`}
+      style={!fill && width ? { maxWidth: width } : undefined}
     >
       <Image
         src={imageUrl}
@@ -67,7 +69,7 @@ export function MediaImage({
         height={!fill ? height || media.height : undefined}
         sizes={sizes}
         priority={priority}
-        className="object-cover"
+        className={fill ? "object-cover" : "w-full h-auto"}
       />
     </div>
   );

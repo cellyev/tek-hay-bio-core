@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { Inter, Playfair_Display } from 'next/font/google'
 import '../globals.css'

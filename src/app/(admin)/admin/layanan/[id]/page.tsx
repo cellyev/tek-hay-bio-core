@@ -21,5 +21,5 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
         <ServicesForm initialData={data} />
       </div>
     )
-  } catch (error) { notFound() }
+  } catch { notFound() }
 }

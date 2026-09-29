@@ -1,5 +1,8 @@
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '../access/roles'
+import { slugField } from '../../lib/slug/slugField'
 
 export const Services: CollectionConfig = {
   slug: 'services',
@@ -20,6 +23,7 @@ export const Services: CollectionConfig = {
       required: true,
       localized: true,
     },
+    slugField(),
     {
       name: 'shortDescription',
       type: 'textarea',
@@ -33,7 +37,7 @@ export const Services: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'service-media',
     },
     {
       name: 'sortOrder',

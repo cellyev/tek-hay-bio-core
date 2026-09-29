@@ -29,7 +29,7 @@ export default async function EditNewsPage({ params }: { params: Promise<{ id: s
         <NewsForm initialData={post} />
       </div>
     )
-  } catch (error) {
+  } catch {
     notFound()
   }
 }

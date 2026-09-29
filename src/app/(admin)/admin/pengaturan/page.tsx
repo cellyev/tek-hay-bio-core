@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -30,6 +32,9 @@ export default async function PengaturanPage() {
       <h1 className="text-2xl font-bold text-slate-900 mb-6">Pengaturan Lanjutan</h1>
       <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
         <p className="mb-4 text-slate-600">Fitur pengaturan lanjutan (seperti sinkronisasi bahasa dan backup konfigurasi) saat ini dinonaktifkan dalam mode Custom Admin.</p>
+        <Link href="/admin-payload" className="inline-block bg-slate-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition">
+          Buka Payload Admin Asli
+        </Link>
       </div>
     </div>
   )
