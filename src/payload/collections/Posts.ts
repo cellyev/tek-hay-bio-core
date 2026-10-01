@@ -41,9 +41,7 @@ export const Posts: CollectionConfig = {
     update: isAdminOrEditor,
     delete: isAdminOrEditor,
   },
-  versions: {
-    drafts: true,
-  },
+  
   fields: [
     {
       name: 'title',
