@@ -35,7 +35,7 @@ export async function getHomepageData(locale: 'id' | 'en') {
   })
 
   const mediaRes = await payload.find({
-    collection: 'media',
+    collection: 'gallery-media',
     limit: 6,
     // Try to fetch images that might be good for a gallery preview
     where: { 

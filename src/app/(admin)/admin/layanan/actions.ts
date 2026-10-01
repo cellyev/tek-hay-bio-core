@@ -30,8 +30,11 @@ export async function saveServiceAction(id: string | null, data: any) {
       })
     }
     
-    revalidatePath('/admin/layanan')
-    revalidatePath('/', 'layout')
+        revalidatePath('/admin/layanan')
+    revalidatePath('/id')
+    revalidatePath('/en')
+    revalidatePath('/id/layanan', 'page')
+    revalidatePath('/en/services', 'page')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
@@ -51,8 +54,11 @@ export async function deleteServiceAction(id: string) {
       overrideAccess: false,
     })
     
-    revalidatePath('/admin/layanan')
-    revalidatePath('/', 'layout')
+        revalidatePath('/admin/layanan')
+    revalidatePath('/id')
+    revalidatePath('/en')
+    revalidatePath('/id/layanan', 'page')
+    revalidatePath('/en/services', 'page')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }

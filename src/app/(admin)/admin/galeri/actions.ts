@@ -21,8 +21,11 @@ export async function updateMediaAction(id: string, collection: string, data: an
       overrideAccess: false,
     })
     
-    revalidatePath('/admin/galeri')
-    revalidatePath('/', 'layout')
+        revalidatePath('/admin/galeri')
+    revalidatePath('/id')
+    revalidatePath('/en')
+    revalidatePath('/id/galeri', 'page')
+    revalidatePath('/en/gallery', 'page')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }

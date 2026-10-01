@@ -30,8 +30,13 @@ export async function saveActivityAction(id: string | null, data: any) {
       })
     }
     
-    revalidatePath('/admin/kegiatan')
-    revalidatePath('/', 'layout')
+        revalidatePath('/admin/kegiatan')
+    revalidatePath('/id')
+    revalidatePath('/en')
+    revalidatePath('/id/kegiatan', 'page')
+    revalidatePath('/en/activities', 'page')
+    revalidatePath('/[locale]/kegiatan/[slug]', 'page')
+    revalidatePath('/[locale]/activities/[slug]', 'page')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
@@ -51,8 +56,13 @@ export async function deleteActivityAction(id: string) {
       overrideAccess: false,
     })
     
-    revalidatePath('/admin/kegiatan')
-    revalidatePath('/', 'layout')
+        revalidatePath('/admin/kegiatan')
+    revalidatePath('/id')
+    revalidatePath('/en')
+    revalidatePath('/id/kegiatan', 'page')
+    revalidatePath('/en/activities', 'page')
+    revalidatePath('/[locale]/kegiatan/[slug]', 'page')
+    revalidatePath('/[locale]/activities/[slug]', 'page')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }

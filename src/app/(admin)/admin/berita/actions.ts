@@ -30,8 +30,13 @@ export async function saveNewsAction(id: string | null, data: any) {
       })
     }
     
-    revalidatePath('/admin/berita')
-    revalidatePath('/', 'layout')
+        revalidatePath('/admin/berita')
+    revalidatePath('/id')
+    revalidatePath('/en')
+    revalidatePath('/id/berita', 'page')
+    revalidatePath('/en/news', 'page')
+    revalidatePath('/[locale]/berita/[slug]', 'page')
+    revalidatePath('/[locale]/news/[slug]', 'page')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
@@ -51,8 +56,13 @@ export async function deleteNewsAction(id: string) {
       overrideAccess: false,
     })
     
-    revalidatePath('/admin/berita')
-    revalidatePath('/', 'layout')
+        revalidatePath('/admin/berita')
+    revalidatePath('/id')
+    revalidatePath('/en')
+    revalidatePath('/id/berita', 'page')
+    revalidatePath('/en/news', 'page')
+    revalidatePath('/[locale]/berita/[slug]', 'page')
+    revalidatePath('/[locale]/news/[slug]', 'page')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }

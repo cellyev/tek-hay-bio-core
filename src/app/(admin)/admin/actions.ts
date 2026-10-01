@@ -25,8 +25,8 @@ export async function saveGlobalAction(slug: 'history' | 'site-settings' | 'cont
       overrideAccess: false,
     })
     
-    revalidatePath(`/admin/${slug}`)
-    revalidatePath('/', 'layout')
+        revalidatePath(`/admin/${slug}`)
+    revalidatePath('/', 'layout') // Global info changes affect the whole layout (navbar/footer/history)
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
