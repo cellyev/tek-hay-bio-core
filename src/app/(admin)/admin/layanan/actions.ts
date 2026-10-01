@@ -64,3 +64,28 @@ export async function deleteServiceAction(id: string) {
     return { success: false, error: error.message }
   }
 }
+export async function deleteManyServiceAction(ids: string[]) {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const { user } = await payload.auth({ headers: await headers() })
+    if (!user) throw new Error('Unauthorized')
+
+    for (const id of ids) {
+      await payload.delete({
+        collection: 'services',
+        id,
+        user,
+        overrideAccess: false,
+      })
+    }
+    
+    revalidatePath('/admin/layanan')
+    revalidatePath('/id')
+    revalidatePath('/en')
+    revalidatePath('/id/layanan', 'page')
+    revalidatePath('/en/services', 'page')
+    return { success: true }
+  } catch (error: any) {
+    return { success: false, error: error.message }
+  }
+}

@@ -6,7 +6,10 @@ import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import Link from 'next/link'
-import { Plus, Edit, Trash2 } from 'lucide-react'
+import { Plus, Edit } from 'lucide-react'
+import { DeleteActionClient } from '@/components/admin/DeleteActionClient'
+import { BulkDeleteProvider, BulkDeleteCheckbox, BulkDeleteSelectAll, BulkDeleteButton } from '@/components/admin/BulkDelete'
+import { deleteNewsAction, deleteManyNewsAction } from './actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,23 +30,28 @@ export default async function NewsAdminPage({ searchParams }: { searchParams: Pr
   })
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Berita</h1>
-          <p className="text-sm text-slate-500">Kelola artikel dan berita terbaru.</p>
+    <BulkDeleteProvider>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Berita</h1>
+            <p className="text-sm text-slate-500">Kelola artikel dan berita terbaru.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <BulkDeleteButton action={deleteManyNewsAction} />
+            <Link href="/admin/berita/tambah" className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-md hover:bg-slate-800 text-sm font-medium shrink-0">
+              <Plus className="w-4 h-4" />
+              Tambah Berita
+            </Link>
+          </div>
         </div>
-        <Link href="/admin/berita/tambah" className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-md hover:bg-slate-800 text-sm font-medium shrink-0">
-          <Plus className="w-4 h-4" />
-          Tambah Berita
-        </Link>
-      </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-slate-600">
             <thead className="bg-slate-50 text-slate-900 border-b border-slate-200">
               <tr>
+                <th className="px-6 py-4 font-medium w-12"><BulkDeleteSelectAll allIds={news.docs.map((d: any) => d.id)} /></th>
                 <th className="px-6 py-4 font-medium">Judul</th>
                 <th className="px-6 py-4 font-medium">Kategori</th>
                 <th className="px-6 py-4 font-medium">Status</th>
@@ -54,13 +62,14 @@ export default async function NewsAdminPage({ searchParams }: { searchParams: Pr
             <tbody className="divide-y divide-slate-100">
               {news.docs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
                     Belum ada berita yang ditulis.
                   </td>
                 </tr>
               ) : (
                 news.docs.map((post) => (
                   <tr key={post.id} className="hover:bg-slate-50">
+                    <td className="px-6 py-4"><BulkDeleteCheckbox id={post.id} /></td>
                     <td className="px-6 py-4 font-medium text-slate-900 max-w-xs truncate">
                       {post.title as string || 'Tanpa Judul'}
                     </td>
@@ -78,9 +87,10 @@ export default async function NewsAdminPage({ searchParams }: { searchParams: Pr
                       {new Date(post.createdAt).toLocaleDateString('id-ID')}
                     </td>
                     <td className="px-6 py-4 text-right space-x-2">
-                      <Link href={`/admin/berita/${post.id}`} className="inline-flex items-center justify-center p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
+                      <Link href={`/admin/berita/${post.id}`} className="inline-flex items-center justify-center p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Edit">
                         <Edit className="w-4 h-4" />
                       </Link>
+                      <DeleteActionClient id={post.id} action={deleteNewsAction} />
                     </td>
                   </tr>
                 ))
@@ -109,6 +119,7 @@ export default async function NewsAdminPage({ searchParams }: { searchParams: Pr
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </BulkDeleteProvider>
   )
 }
