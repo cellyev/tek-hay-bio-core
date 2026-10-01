@@ -31,7 +31,7 @@ export async function saveActivityAction(id: string | null, data: any) {
     }
     
     revalidatePath('/admin/kegiatan')
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
@@ -52,7 +52,7 @@ export async function deleteActivityAction(id: string) {
     })
     
     revalidatePath('/admin/kegiatan')
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }

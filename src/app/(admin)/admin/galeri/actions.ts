@@ -22,7 +22,7 @@ export async function updateMediaAction(id: string, collection: string, data: an
     })
     
     revalidatePath('/admin/galeri')
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }

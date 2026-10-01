@@ -31,7 +31,7 @@ export async function saveServiceAction(id: string | null, data: any) {
     }
     
     revalidatePath('/admin/layanan')
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
@@ -52,7 +52,7 @@ export async function deleteServiceAction(id: string) {
     })
     
     revalidatePath('/admin/layanan')
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }

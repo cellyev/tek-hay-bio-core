@@ -31,7 +31,7 @@ export async function saveNewsAction(id: string | null, data: any) {
     }
     
     revalidatePath('/admin/berita')
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
@@ -52,7 +52,7 @@ export async function deleteNewsAction(id: string) {
     })
     
     revalidatePath('/admin/berita')
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }

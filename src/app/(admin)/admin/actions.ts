@@ -26,7 +26,7 @@ export async function saveGlobalAction(slug: 'history' | 'site-settings' | 'cont
     })
     
     revalidatePath(`/admin/${slug}`)
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error: any) {
     return { success: false, error: error.message }
