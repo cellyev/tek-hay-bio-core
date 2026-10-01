@@ -52,7 +52,7 @@ export const slugField = (fieldToUse: string = 'title'): Field => {
                   where: queryWhere,
                   limit: 1,
                   locale: req.locale,
-                  req,
+                  // req, // REMOVED to prevent transaction lock issues with drafts
                 })
 
                 if (query.totalDocs === 0) {
