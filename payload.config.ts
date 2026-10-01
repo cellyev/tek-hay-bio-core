@@ -51,8 +51,18 @@ export default buildConfig({
     defaultLocale: 'id',
     fallback: true,
   },
-  cors: ['http://localhost:3000'],
-  csrf: ['http://localhost:3000'],
+  cors: [
+    'http://localhost:3000',
+    process.env.NEXT_PUBLIC_SERVER_URL || '',
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '',
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+  ].filter(Boolean),
+  csrf: [
+    'http://localhost:3000',
+    process.env.NEXT_PUBLIC_SERVER_URL || '',
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '',
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+  ].filter(Boolean),
   plugins: [
     vercelBlobStorage({
       enabled: !!process.env.BLOB_READ_WRITE_TOKEN,
