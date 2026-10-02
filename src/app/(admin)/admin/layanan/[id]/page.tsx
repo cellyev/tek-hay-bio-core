@@ -14,7 +14,7 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
   if (!user) redirect('/admin/login')
 
   try {
-    const data = await payload.findByID({ collection: 'services', id })
+    const data = await payload.findByID({ collection: 'services', id, locale: 'all' })
     return (
       <div className="space-y-6">
         <div><h1 className="text-2xl font-bold text-slate-900">Edit Layanan</h1></div>

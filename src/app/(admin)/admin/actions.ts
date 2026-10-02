@@ -7,6 +7,23 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { revalidatePath } from 'next/cache'
 
+
+const extractLocaleData = (data: any, locale: 'id' | 'en'): any => {
+  if (!data || typeof data !== 'object') return data;
+  if (Array.isArray(data)) return data.map(item => extractLocaleData(item, locale));
+  
+  // If this object has id and en keys, it's a localized field
+  if (data.hasOwnProperty('id') && data.hasOwnProperty('en') && Object.keys(data).length === 2) {
+    return data[locale];
+  }
+  
+  const result: any = {};
+  for (const key in data) {
+    result[key] = extractLocaleData(data[key], locale);
+  }
+  return result;
+}
+
 export async function saveGlobalAction(slug: 'history' | 'site-settings' | 'contact-information' | 'home-page', data: any) {
   try {
     const payload = await getPayload({ config: configPromise })
@@ -24,8 +41,17 @@ export async function saveGlobalAction(slug: 'history' | 'site-settings' | 'cont
 
     await payload.updateGlobal({
       slug,
-      data,
+      data: extractLocaleData(data, 'id'),
       user,
+      locale: 'id',
+      overrideAccess: false,
+    })
+    
+    await payload.updateGlobal({
+      slug,
+      data: extractLocaleData(data, 'en'),
+      user,
+      locale: 'en',
       overrideAccess: false,
     })
     

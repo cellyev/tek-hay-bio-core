@@ -22,6 +22,7 @@ export function AdminShell({ children, user }: { children: React.ReactNode, user
     { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { label: 'Halaman Beranda', href: '/admin/halaman-beranda', icon: Home },
     { label: 'Berita', href: '/admin/berita', icon: FileText },
+    { label: 'Kategori Berita', href: '/admin/kategori-berita', icon: FileText },
     { label: 'Kegiatan', href: '/admin/kegiatan', icon: CalendarDays },
     { label: 'Layanan', href: '/admin/layanan', icon: Box },
     { label: 'Galeri', href: '/admin/galeri', icon: ImageIcon },

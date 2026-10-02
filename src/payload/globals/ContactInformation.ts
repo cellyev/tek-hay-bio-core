@@ -13,6 +13,9 @@ export const ContactInformation: GlobalConfig = {
     read: () => true,
     update: isAdmin,
   },
+  admin: {
+    group: 'Pengaturan & Sistem',
+  },
   fields: [
     { name: 'address', type: 'textarea', localized: true },
     { name: 'phone', type: 'text' },

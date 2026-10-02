@@ -10,6 +10,9 @@ export const HistoryMedia: CollectionConfig = {
     update: isAdminOrEditor,
     delete: isAdminOrEditor,
   },
+  admin: {
+    group: 'Pusat Media',
+  },
   fields: [
     { name: 'alt', type: 'text' },
     { name: 'title', type: 'text' },

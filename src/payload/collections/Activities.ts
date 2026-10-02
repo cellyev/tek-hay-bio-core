@@ -13,6 +13,7 @@ export const Activities: CollectionConfig = {
   },
   slug: 'activities',
   admin: {
+    group: 'Manajemen Konten',
     useAsTitle: 'title',
     defaultColumns: ['title', 'status', 'date'],
   },

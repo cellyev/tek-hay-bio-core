@@ -5,6 +5,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveGlobalAction } from "@/app/(admin)/admin/actions";
+import { LocaleTabs } from "@/components/admin/LocaleTabs";
 
 export function WebsiteInfoForm({
   contactData,
@@ -14,28 +15,38 @@ export function WebsiteInfoForm({
   siteData?: any;
 }) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'id' | 'en'>('id');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
+
+  const getLocalized = (field: any, fallback = '') => {
+    if (!field) return { id: fallback, en: fallback }
+    if (typeof field === 'string') return { id: field, en: field }
+    return { id: field.id || fallback, en: field.en || fallback }
+  }
+
+  const [contactLocalized, setContactLocalized] = useState({
+    address: getLocalized(contactData?.address),
+    visitingHours: getLocalized(contactData?.visitingHours),
+  });
+
+  const [siteLocalized, setSiteLocalized] = useState({
+    siteName: getLocalized(siteData?.siteName),
+    tagline: getLocalized(siteData?.tagline),
+  });
 
   const [contact, setContact] = useState({
     email: contactData?.email || "",
     phone: contactData?.phone || "",
-    address: contactData?.address || "",
     googleMapsUrl: contactData?.googleMapsUrl || "",
     googleMapsEmbedCode: contactData?.googleMapsEmbedCode || "",
     latitude: contactData?.latitude || "",
     longitude: contactData?.longitude || "",
-    visitingHours: contactData?.visitingHours || "",
   });
 
   const [socialMedia, setSocialMedia] = useState<any[]>(
     contactData?.socialMedia || [],
   );
-
-  const [site, setSite] = useState({
-    siteName: siteData?.siteName || "",
-    tagline: siteData?.tagline || "",
-  });
 
   const handleContactChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -43,8 +54,20 @@ export function WebsiteInfoForm({
     setContact({ ...contact, [e.target.name]: e.target.value });
   };
 
-  const handleSiteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSite({ ...site, [e.target.name]: e.target.value });
+  const handleContactLocalizedChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setContactLocalized(prev => ({
+      ...prev,
+      [name]: { ...prev[name as keyof typeof prev], [activeTab]: value }
+    }));
+  };
+
+  const handleSiteLocalizedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSiteLocalized(prev => ({
+      ...prev,
+      [name]: { ...prev[name as keyof typeof prev], [activeTab]: value }
+    }));
   };
 
   const handleSocialMediaChange = (
@@ -77,6 +100,8 @@ export function WebsiteInfoForm({
 
     const submitContact = {
       ...contact,
+      address: contactLocalized.address,
+      visitingHours: contactLocalized.visitingHours,
       socialMedia: socialMedia.map((sm) => ({
         platform: sm.platform,
         url: sm.url,
@@ -84,7 +109,12 @@ export function WebsiteInfoForm({
       })),
     };
 
-    const resSite = await saveGlobalAction("site-settings", site);
+    const submitSite = {
+      siteName: siteLocalized.siteName,
+      tagline: siteLocalized.tagline,
+    };
+
+    const resSite = await saveGlobalAction("site-settings", submitSite);
     const resContact = await saveGlobalAction(
       "contact-information",
       submitContact,
@@ -107,32 +137,34 @@ export function WebsiteInfoForm({
         </div>
       )}
 
+      <LocaleTabs activeTab={activeTab} onTabChange={setActiveTab} />
+
       <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
         <h3 className="font-semibold text-lg text-slate-900 border-b border-slate-100 pb-2">
-          Identitas Website
+          Identitas Website ({activeTab.toUpperCase()})
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Nama Website
+              Nama Website ({activeTab.toUpperCase()})
             </label>
             <input
               type="text"
               name="siteName"
-              value={site.siteName}
-              onChange={handleSiteChange}
+              value={siteLocalized.siteName[activeTab]}
+              onChange={handleSiteLocalizedChange}
               className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Tagline
+              Tagline ({activeTab.toUpperCase()})
             </label>
             <input
               type="text"
               name="tagline"
-              value={site.tagline}
-              onChange={handleSiteChange}
+              value={siteLocalized.tagline[activeTab]}
+              onChange={handleSiteLocalizedChange}
               className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900"
             />
           </div>
@@ -170,24 +202,24 @@ export function WebsiteInfoForm({
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Alamat Lengkap
+              Alamat Lengkap ({activeTab.toUpperCase()})
             </label>
             <textarea
               name="address"
-              value={contact.address}
-              onChange={handleContactChange}
+              value={contactLocalized.address[activeTab]}
+              onChange={handleContactLocalizedChange}
               rows={3}
               className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900"
             />
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Jam Operasional
+              Jam Operasional ({activeTab.toUpperCase()})
             </label>
             <textarea
               name="visitingHours"
-              value={contact.visitingHours}
-              onChange={handleContactChange}
+              value={contactLocalized.visitingHours[activeTab]}
+              onChange={handleContactLocalizedChange}
               rows={2}
               className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900"
             />

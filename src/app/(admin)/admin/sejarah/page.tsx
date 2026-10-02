@@ -16,6 +16,7 @@ export default async function HistoryAdminPage() {
 
   const data = await payload.findGlobal({
     slug: 'history',
+    locale: 'all',
   })
 
   return (

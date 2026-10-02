@@ -7,6 +7,28 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { revalidatePath } from 'next/cache'
 
+
+
+
+
+
+
+
+const extractLocaleData = (data: any, locale: 'id' | 'en'): any => {
+  if (!data || typeof data !== 'object') return data;
+  if (Array.isArray(data)) return data.map(item => extractLocaleData(item, locale));
+  
+  if (data.hasOwnProperty('id') && data.hasOwnProperty('en') && Object.keys(data).length === 2) {
+    return data[locale];
+  }
+  
+  const result: any = {};
+  for (const key in data) {
+    result[key] = extractLocaleData(data[key], locale);
+  }
+  return result;
+}
+
 export async function saveActivityAction(id: string | null, data: any) {
   try {
     const payload = await getPayload({ config: configPromise })
@@ -17,15 +39,33 @@ export async function saveActivityAction(id: string | null, data: any) {
       await payload.update({
         collection: 'activities',
         id,
-        data,
+        data: extractLocaleData(data, 'id'),
         user,
+        locale: 'id',
+        overrideAccess: false,
+      })
+      await payload.update({
+        collection: 'activities',
+        id,
+        data: extractLocaleData(data, 'en'),
+        user,
+        locale: 'en',
         overrideAccess: false,
       })
     } else {
-      await payload.create({
+      const created = await payload.create({
         collection: 'activities',
-        data,
+        data: extractLocaleData(data, 'id'),
         user,
+        locale: 'id',
+        overrideAccess: false,
+      })
+      await payload.update({
+        collection: 'activities',
+        id: created.id,
+        data: extractLocaleData(data, 'en'),
+        user,
+        locale: 'en',
         overrideAccess: false,
       })
     }

@@ -74,7 +74,7 @@ export default async function NewsAdminPage({ searchParams }: { searchParams: Pr
                       {post.title as string || 'Tanpa Judul'}
                     </td>
                     <td className="px-6 py-4">
-                      {post.category as string || '-'}
+                      {typeof post.category === 'string' ? post.category : ((post.category as any)?.title?.id || (post.category as any)?.title?.en || (post.category as any)?.title || '')}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
@@ -123,3 +123,4 @@ export default async function NewsAdminPage({ searchParams }: { searchParams: Pr
     </BulkDeleteProvider>
   )
 }
+

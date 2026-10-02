@@ -6,18 +6,12 @@ import { MediaImage } from '../ui/MediaImage'
 import Link from 'next/link'
 import type { CMSRecord } from '@/types'
 
-const getRoute = (val: string, def: string, locale: string) => {
-  const r = val || def
-  if (r === 'home') return `/${locale}`
-  return `/${locale}/${r}`
-}
-
 export function ServicesList({ homePage, services, locale }: { homePage?: CMSRecord, services: CMSRecord[], locale: 'id' | 'en' }) {
   if (!services || services.length === 0) return null
   
   const hp = (homePage?.servicesSection as any) || {}
   const title = hp.title || (locale === 'id' ? 'Layanan Kami' : 'Our Services')
-  const linkUrl = getRoute(hp.linkUrl, 'layanan', locale)
+  const linkUrl = `/${locale}/layanan`
   
   return (
     <Section className="bg-stone-50">
@@ -63,7 +57,7 @@ export function ActivitiesList({ homePage, activities, locale }: { homePage?: CM
   
   const hp = (homePage?.activitiesSection as any) || {}
   const title = hp.title || (locale === 'id' ? 'Kegiatan Mendatang' : 'Upcoming Activities')
-  const linkUrl = getRoute(hp.linkUrl, 'kegiatan', locale)
+  const linkUrl = `/${locale}/kegiatan`
   
   return (
     <Section className="bg-white border-t border-border">
@@ -110,7 +104,7 @@ export function NewsList({ homePage, posts, locale }: { homePage?: CMSRecord, po
   
   const hp = (homePage?.newsSection as any) || {}
   const title = hp.title || (locale === 'id' ? 'Berita Terkini' : 'Latest News')
-  const linkUrl = getRoute(hp.linkUrl, 'berita', locale)
+  const linkUrl = `/${locale}/berita`
   
   return (
     <Section className="bg-stone-50 border-t border-border">
@@ -137,7 +131,7 @@ export function NewsList({ homePage, posts, locale }: { homePage?: CMSRecord, po
               <div className="space-y-2">
                 <div className="text-xs text-stone-500">
                   {post.publishedAt ? new Date(post.publishedAt as string).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
-                  {Boolean(post.category) && <span className="ml-2 px-2 py-1 bg-stone-200 rounded-full text-stone-700">{post.category as string}</span>}
+                  {Boolean(post.category) && <span className="ml-2 px-2 py-1 bg-stone-200 rounded-full text-stone-700">{typeof post.category === 'string' ? post.category : ((post.category as any)?.title?.id || (post.category as any)?.title?.en || (post.category as any)?.title || '')}</span>}
                 </div>
                 <h3 className="font-bold text-xl text-stone-900 group-hover:text-primary transition-colors line-clamp-2">
                   {post.title as string}
@@ -151,3 +145,4 @@ export function NewsList({ homePage, posts, locale }: { homePage?: CMSRecord, po
     </Section>
   )
 }
+

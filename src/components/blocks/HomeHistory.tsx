@@ -6,20 +6,14 @@ import { MediaImage } from '../ui/MediaImage'
 import { Button } from '../ui/Button'
 import type { CMSRecord } from '@/types'
 
-const getRoute = (val: string, def: string, locale: string) => {
-  const r = val || def
-  if (r === 'home') return `/${locale}`
-  return `/${locale}/${r}`
-}
-
 export function ShortHistory({ homePage, history, locale }: { homePage?: CMSRecord, history: CMSRecord, locale: 'id' | 'en' }) {
   const hp = (homePage?.historySection as any) || {}
   
   const heading = hp.heading || (locale === 'id' ? 'Jejak Waktu' : 'Footprints of Time')
   const title = hp.title || (history?.title as string) || ''
   const description = hp.description || (history?.shortDescription as string) || 'Jelajahi garis waktu yang membentuk identitas kami.'
-  const buttonText = hp.buttonText || (locale === 'id' ? 'Baca Sejarah Lengkap' : 'Read Full History')
-  const buttonLink = getRoute(hp.buttonLink, 'sejarah', locale)
+  const buttonText = locale === 'id' ? 'Baca Sejarah Lengkap' : 'Read Full History'
+  const buttonLink = `/${locale}/sejarah`
   
   const timeline = history?.timeline as CMSRecord[] | undefined
   const displayImage = hp.image || (timeline && timeline[0]?.image) || null

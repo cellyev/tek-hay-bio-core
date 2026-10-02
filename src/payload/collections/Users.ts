@@ -6,6 +6,7 @@ import { isAdmin, isAdminOrSelf } from '../access/roles'
 export const Users: CollectionConfig = {
   slug: 'users',
   admin: {
+    group: 'Pengaturan & Sistem',
     useAsTitle: 'email',
   },
   access: {

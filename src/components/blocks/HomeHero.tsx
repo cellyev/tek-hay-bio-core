@@ -7,12 +7,6 @@ import { Container, Section } from '../ui/Layout'
 import Link from 'next/link'
 import type { CMSRecord } from '@/types'
 
-const getRoute = (val: string, def: string, locale: string) => {
-  const r = val || def
-  if (r === 'home') return `/${locale}`
-  return `/${locale}/${r}`
-}
-
 export function Hero({ homePage, siteSettings, locale }: { homePage?: CMSRecord, siteSettings: CMSRecord, locale: 'id' | 'en' }) {
   const hp = (homePage?.hero as any) || {}
   
@@ -20,10 +14,10 @@ export function Hero({ homePage, siteSettings, locale }: { homePage?: CMSRecord,
   const tagline = hp.tagline || (siteSettings.tagline as string) || (locale === 'id' ? 'Pusat Pelestarian Tradisi & Budaya' : 'Center for Tradition & Culture Preservation')
   const bgImage = hp.backgroundImage || siteSettings.defaultSocialImage || null
   
-  const pBtnText = hp.primaryButtonText || (locale === 'id' ? 'Pelajari Sejarah' : 'Discover History')
-  const pBtnLink = getRoute(hp.primaryButtonLink, 'sejarah', locale)
-  const sBtnText = hp.secondaryButtonText || (locale === 'id' ? 'Rencanakan Kunjungan' : 'Plan a Visit')
-  const sBtnLink = getRoute(hp.secondaryButtonLink, 'kontak', locale)
+  const pBtnText = locale === 'id' ? 'Pelajari Sejarah' : 'Discover History'
+  const pBtnLink = `/${locale}/sejarah`
+  const sBtnText = locale === 'id' ? 'Rencanakan Kunjungan' : 'Plan a Visit'
+  const sBtnLink = `/${locale}/kontak`
 
   return (
     <div className="relative w-full h-[70vh] min-h-[500px] flex items-center justify-center bg-stone-900 overflow-hidden">
@@ -66,8 +60,8 @@ export function Introduction({ homePage, siteSettings, locale }: { homePage?: CM
   
   const title = intro.title || `${locale === 'id' ? 'Selamat Datang di ' : 'Welcome to '} ${(siteSettings.siteName as string) || 'Tek Hay Bio'}`
   const description = intro.description || (siteSettings.tagline as string) || 'Sebuah tempat yang merawat warisan budaya dan nilai-nilai luhur dari generasi ke generasi.'
-  const linkText = intro.linkText || (locale === 'id' ? 'Tentang Kami' : 'About Us')
-  const linkUrl = getRoute(intro.linkUrl, 'tentang-kami', locale)
+  const linkText = locale === 'id' ? 'Tentang Kami' : 'About Us'
+  const linkUrl = `/${locale}/tentang-kami`
 
   return (
     <Section className="bg-stone-50 border-b border-border">

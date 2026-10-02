@@ -14,7 +14,7 @@ export default async function EditActivityPage({ params }: { params: Promise<{ i
   if (!user) redirect('/admin/login')
 
   try {
-    const data = await payload.findByID({ collection: 'activities', id })
+    const data = await payload.findByID({ collection: 'activities', id, locale: 'all' })
     return (
       <div className="space-y-6">
         <div><h1 className="text-2xl font-bold text-slate-900">Edit Kegiatan</h1></div>

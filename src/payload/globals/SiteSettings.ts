@@ -13,6 +13,9 @@ export const SiteSettings: GlobalConfig = {
     read: () => true,
     update: isAdmin,
   },
+  admin: {
+    group: 'Pengaturan & Sistem',
+  },
   fields: [
     {
       name: 'siteName',

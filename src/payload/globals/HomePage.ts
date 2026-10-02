@@ -24,7 +24,7 @@ export const HomePage: GlobalConfig = {
     update: isAdmin,
   },
   admin: {
-    group: 'Pages',
+    group: 'Halaman & Profil',
   },
   fields: [
     {
@@ -52,36 +52,6 @@ export const HomePage: GlobalConfig = {
                   type: 'upload',
                   relationTo: 'site-media',
                 },
-                {
-                  type: 'row',
-                  fields: [
-                    {
-                      name: 'primaryButtonText',
-                      type: 'text',
-                      localized: true,
-                    },
-                    {
-                      name: 'primaryButtonLink',
-                      type: 'select',
-                      options: routeOptions,
-                    },
-                  ],
-                },
-                {
-                  type: 'row',
-                  fields: [
-                    {
-                      name: 'secondaryButtonText',
-                      type: 'text',
-                      localized: true,
-                    },
-                    {
-                      name: 'secondaryButtonLink',
-                      type: 'select',
-                      options: routeOptions,
-                    },
-                  ],
-                },
               ],
             },
           ],
@@ -102,16 +72,6 @@ export const HomePage: GlobalConfig = {
                   name: 'description',
                   type: 'textarea',
                   localized: true,
-                },
-                {
-                  name: 'linkText',
-                  type: 'text',
-                  localized: true,
-                },
-                {
-                  name: 'linkUrl',
-                  type: 'select',
-                  options: routeOptions,
                 },
               ],
             },
@@ -143,16 +103,6 @@ export const HomePage: GlobalConfig = {
                   name: 'image',
                   type: 'upload',
                   relationTo: 'history-media',
-                },
-                {
-                  name: 'buttonText',
-                  type: 'text',
-                  localized: true,
-                },
-                {
-                  name: 'buttonLink',
-                  type: 'select',
-                  options: routeOptions,
                 },
               ],
             },
@@ -213,11 +163,6 @@ export const HomePage: GlobalConfig = {
                   type: 'textarea',
                   localized: true,
                 },
-                {
-                  name: 'linkUrl',
-                  type: 'select',
-                  options: routeOptions,
-                },
               ],
             },
             {
@@ -234,11 +179,6 @@ export const HomePage: GlobalConfig = {
                   type: 'textarea',
                   localized: true,
                 },
-                {
-                  name: 'linkUrl',
-                  type: 'select',
-                  options: routeOptions,
-                },
               ],
             },
             {
@@ -254,11 +194,6 @@ export const HomePage: GlobalConfig = {
                   name: 'description',
                   type: 'textarea',
                   localized: true,
-                },
-                {
-                  name: 'linkUrl',
-                  type: 'select',
-                  options: routeOptions,
                 },
               ],
             },
@@ -281,16 +216,6 @@ export const HomePage: GlobalConfig = {
                   type: 'textarea',
                   localized: true,
                 },
-                {
-                  name: 'buttonText',
-                  type: 'text',
-                  localized: true,
-                },
-                {
-                  name: 'buttonLink',
-                  type: 'select',
-                  options: routeOptions,
-                },
               ],
             },
             {
@@ -306,16 +231,6 @@ export const HomePage: GlobalConfig = {
                   name: 'description',
                   type: 'textarea',
                   localized: true,
-                },
-                {
-                  name: 'buttonText',
-                  type: 'text',
-                  localized: true,
-                },
-                {
-                  name: 'buttonLink',
-                  type: 'select',
-                  options: routeOptions,
                 },
               ],
             },

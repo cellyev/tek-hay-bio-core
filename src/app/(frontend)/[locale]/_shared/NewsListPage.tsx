@@ -34,7 +34,7 @@ export async function NewsListPage({ locale }: { locale: 'id' | 'en' }) {
                   <div className="space-y-2">
                     <div className="text-xs text-stone-500">
                       {post.publishedAt ? new Date(post.publishedAt as string).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
-                      {Boolean(post.category) && <span className="ml-2 px-2 py-1 bg-stone-200 rounded-full text-stone-700">{post.category as string}</span>}
+                      {Boolean(post.category) && <span className="ml-2 px-2 py-1 bg-stone-200 rounded-full text-stone-700">{typeof post.category === 'string' ? post.category : ((post.category as any)?.title?.id || (post.category as any)?.title?.en || (post.category as any)?.title || '')}</span>}
                     </div>
                     <h2 className="font-bold text-xl text-stone-900 group-hover:text-primary transition-colors line-clamp-2">
                       {post.title as string}

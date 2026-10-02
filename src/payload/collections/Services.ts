@@ -13,6 +13,7 @@ export const Services: CollectionConfig = {
   },
   slug: 'services',
   admin: {
+    group: 'Manajemen Konten',
     useAsTitle: 'title',
     defaultColumns: ['title', 'status', 'sortOrder'],
   },

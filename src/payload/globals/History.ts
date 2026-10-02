@@ -13,6 +13,9 @@ export const History: GlobalConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
+  admin: {
+    group: 'Halaman & Profil',
+  },
   fields: [
     {
       name: 'title',
@@ -34,7 +37,7 @@ export const History: GlobalConfig = {
       name: 'timeline',
       type: 'array',
       fields: [
-        { name: 'year', type: 'text' },
+        { name: 'year', type: 'text', localized: true },
         { name: 'title', type: 'text', localized: true },
         { name: 'description', type: 'textarea', localized: true },
         { name: 'image', type: 'upload', relationTo: 'history-media' },

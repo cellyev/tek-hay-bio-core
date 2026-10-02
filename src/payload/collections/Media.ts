@@ -13,6 +13,9 @@ export const Media: CollectionConfig = {
     delete: isAdminOrEditor,
   },
 
+  admin: {
+    group: 'Pusat Media',
+  },
   fields: [
     {
       name: "alt",

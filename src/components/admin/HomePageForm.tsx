@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveGlobalAction } from '@/app/(admin)/admin/actions'
 import { MediaPicker } from '@/components/admin/MediaPicker'
+import { LocaleTabs } from '@/components/admin/LocaleTabs'
 
 const routeOptions = [
   { label: 'Beranda (Home)', value: 'home' },
@@ -23,18 +24,46 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState('hero')
+  const [activeLocale, setActiveLocale] = useState<'id' | 'en'>('id')
+
+
+  const getLocalized = (val: any) => {
+    if (!val) return { id: '', en: '' }
+    if (typeof val === 'string') return { id: val, en: val }
+    return { id: val.id || '', en: val.en || '' }
+  }
+
+  const localizeSection = (section: any, fields: string[]) => {
+    const res = { ...(section || {}) }
+    fields.forEach(f => {
+      res[f] = getLocalized(res[f])
+    })
+    return res
+  }
 
   const [formData, setFormData] = useState({
-    hero: initialData?.hero || {},
-    introduction: initialData?.introduction || {},
-    historySection: initialData?.historySection || {},
-    uniquenessSection: initialData?.uniquenessSection || {},
-    servicesSection: initialData?.servicesSection || {},
-    activitiesSection: initialData?.activitiesSection || {},
-    newsSection: initialData?.newsSection || {},
-    gallerySection: initialData?.gallerySection || {},
-    ctaSection: initialData?.ctaSection || {},
+    hero: localizeSection(initialData?.hero, ['title', 'tagline']),
+    introduction: localizeSection(initialData?.introduction, ['title', 'description']),
+    historySection: localizeSection(initialData?.historySection, ['heading', 'title', 'description']),
+    uniquenessSection: localizeSection(initialData?.uniquenessSection, ['title', 'description']),
+    servicesSection: localizeSection(initialData?.servicesSection, ['title', 'description']),
+    activitiesSection: localizeSection(initialData?.activitiesSection, ['title', 'description']),
+    newsSection: localizeSection(initialData?.newsSection, ['title', 'description']),
+    gallerySection: localizeSection(initialData?.gallerySection, ['title', 'description']),
+    ctaSection: localizeSection(initialData?.ctaSection, ['title', 'description']),
   })
+
+  
+  const handleLocalizedChange = (section: string, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...(prev as any)[section],
+        [name]: { ...(prev as any)[section][name], [activeLocale]: value }
+      }
+    }))
+  }
 
   const handleChange = (section: string, field: string, value: any) => {
     setFormData(prev => ({
@@ -49,7 +78,14 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
   const handleFeatureChange = (index: number, field: string, value: any) => {
     const features = [...(formData.uniquenessSection.features || [])]
     if (!features[index]) features[index] = {}
-    features[index][field] = value
+    if (field === 'title') {
+      let rawTitle = features[index].title;
+      if (typeof rawTitle === 'string') rawTitle = { id: rawTitle, en: rawTitle };
+      if (!rawTitle) rawTitle = { id: '', en: '' };
+      features[index].title = { ...rawTitle, [activeLocale]: value };
+    } else {
+      features[index][field] = value
+    }
     handleChange('uniquenessSection', 'features', features)
   }
 
@@ -81,22 +117,42 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
     }
   }
 
-  const renderInput = (section: string, field: string, label: string, type = 'text') => {
-    const value = (formData as any)[section][field] || ''
+
+  const renderInput = (section: string, field: string, label: string, type = 'text', isLocalized = true) => {
+    let rawValue = (formData as any)[section]?.[field];
+    
+    // Disable localization for non-text fields
+    if (type === 'select-route' || type === 'image') isLocalized = false;
+    
+    if (isLocalized) {
+      if (typeof rawValue === 'string') rawValue = { id: rawValue, en: rawValue };
+      if (!rawValue) rawValue = { id: '', en: '' };
+    }
+    
+    const value = isLocalized ? rawValue[activeLocale] || '' : rawValue || '';
+
+    const onChange = (e: any) => {
+      let newValue = type === 'image' ? e : e.target.value;
+      if (isLocalized) {
+        newValue = { ...rawValue, [activeLocale]: newValue };
+      }
+      handleChange(section, field, newValue);
+    };
+
     return (
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
+        <label className="block text-sm font-medium text-slate-700 mb-1">{label} {isLocalized ? `(${activeLocale.toUpperCase()})` : ''}</label>
         {type === 'textarea' ? (
           <textarea 
             value={value}
-            onChange={e => handleChange(section, field, e.target.value)}
+            onChange={onChange}
             rows={3}
             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900" 
           />
         ) : type === 'select-route' ? (
           <select 
             value={value}
-            onChange={e => handleChange(section, field, e.target.value)}
+            onChange={onChange}
             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900" 
           >
             <option value="">-- Pilih Rute --</option>
@@ -106,19 +162,20 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
           <MediaPicker 
             mediaCollection={field === 'image' && section === 'historySection' ? 'history-media' : 'site-media'}
             value={value} 
-            onChange={(val) => handleChange(section, field, val)} 
+            onChange={onChange} 
           />
         ) : (
           <input 
-            type={type} 
-            value={value}
-            onChange={e => handleChange(section, field, e.target.value)}
+            type="text" 
+            value={value} 
+            onChange={onChange}
             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900" 
           />
         )}
       </div>
     )
   }
+
 
   const tabs = [
     { id: 'hero', label: 'Hero' },
@@ -130,6 +187,9 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl">
+      <div className="mb-6">
+        <LocaleTabs activeTab={activeLocale} onTabChange={setActiveLocale} />
+      </div>
       {error && (
         <div className="p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
           {error}
@@ -160,15 +220,6 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
             {renderInput('hero', 'title', 'Judul Utama (Title)')}
             {renderInput('hero', 'tagline', 'Slogan (Tagline)', 'textarea')}
             {renderInput('hero', 'backgroundImage', 'Gambar Latar (Background)', 'image')}
-            
-            <div className="grid md:grid-cols-2 gap-4">
-              {renderInput('hero', 'primaryButtonText', 'Teks Tombol Utama')}
-              {renderInput('hero', 'primaryButtonLink', 'Tautan Tombol Utama', 'select-route')}
-            </div>
-            <div className="grid md:grid-cols-2 gap-4">
-              {renderInput('hero', 'secondaryButtonText', 'Teks Tombol Sekunder')}
-              {renderInput('hero', 'secondaryButtonLink', 'Tautan Tombol Sekunder', 'select-route')}
-            </div>
           </div>
         )}
 
@@ -177,10 +228,6 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
             <h3 className="font-semibold text-lg text-slate-900 mb-4">Bagian Pengantar Singkat</h3>
             {renderInput('introduction', 'title', 'Judul Pengantar')}
             {renderInput('introduction', 'description', 'Deskripsi Pengantar', 'textarea')}
-            <div className="grid md:grid-cols-2 gap-4">
-              {renderInput('introduction', 'linkText', 'Teks Tautan')}
-              {renderInput('introduction', 'linkUrl', 'URL Tautan', 'select-route')}
-            </div>
           </div>
         )}
 
@@ -192,10 +239,6 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
               {renderInput('historySection', 'title', 'Judul Utama')}
               {renderInput('historySection', 'description', 'Deskripsi', 'textarea')}
               {renderInput('historySection', 'image', 'Gambar Pendukung', 'image')}
-              <div className="grid md:grid-cols-2 gap-4">
-                {renderInput('historySection', 'buttonText', 'Teks Tombol')}
-                {renderInput('historySection', 'buttonLink', 'Tautan Tombol', 'select-route')}
-              </div>
             </div>
 
             <div className="space-y-6">
@@ -216,7 +259,7 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
                       <div className="grid md:grid-cols-2 gap-4 mr-12">
                         <div>
                           <label className="block text-xs text-slate-500 mb-1">Judul Fitur</label>
-                          <input type="text" value={feature.title || ''} onChange={e => handleFeatureChange(i, 'title', e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900" />
+                          <input type="text" value={((typeof feature.title === "string" ? {id: feature.title, en: feature.title} : feature.title) || {})[activeLocale] || ""} onChange={e => handleFeatureChange(i, 'title', e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-900" />
                         </div>
                         <div>
                           <label className="block text-xs text-slate-500 mb-1">Ikon/Gambar</label>
@@ -240,19 +283,16 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
               <h3 className="font-semibold text-lg text-slate-900 border-b pb-2">Bagian Layanan</h3>
               {renderInput('servicesSection', 'title', 'Judul Layanan')}
               {renderInput('servicesSection', 'description', 'Deskripsi Layanan', 'textarea')}
-              {renderInput('servicesSection', 'linkUrl', 'Tautan (Lihat Semua)', 'select-route')}
             </div>
             <div className="space-y-4">
               <h3 className="font-semibold text-lg text-slate-900 border-b pb-2">Bagian Kegiatan</h3>
               {renderInput('activitiesSection', 'title', 'Judul Kegiatan')}
               {renderInput('activitiesSection', 'description', 'Deskripsi Kegiatan', 'textarea')}
-              {renderInput('activitiesSection', 'linkUrl', 'Tautan (Lihat Semua)', 'select-route')}
             </div>
             <div className="space-y-4">
               <h3 className="font-semibold text-lg text-slate-900 border-b pb-2">Bagian Berita</h3>
               {renderInput('newsSection', 'title', 'Judul Berita')}
               {renderInput('newsSection', 'description', 'Deskripsi Berita', 'textarea')}
-              {renderInput('newsSection', 'linkUrl', 'Tautan (Lihat Semua)', 'select-route')}
             </div>
           </div>
         )}
@@ -263,19 +303,11 @@ export function HomePageForm({ initialData }: { initialData?: any }) {
               <h3 className="font-semibold text-lg text-slate-900 border-b pb-2">Bagian Pratinjau Galeri</h3>
               {renderInput('gallerySection', 'title', 'Judul Galeri')}
               {renderInput('gallerySection', 'description', 'Deskripsi', 'textarea')}
-              <div className="grid md:grid-cols-2 gap-4">
-                {renderInput('gallerySection', 'buttonText', 'Teks Tombol')}
-                {renderInput('gallerySection', 'buttonLink', 'Tautan Tombol', 'select-route')}
-              </div>
             </div>
             <div className="space-y-4">
               <h3 className="font-semibold text-lg text-slate-900 border-b pb-2">Bagian CTA Lokasi / Kontak</h3>
               {renderInput('ctaSection', 'title', 'Judul Ajakan (CTA)')}
               {renderInput('ctaSection', 'description', 'Deskripsi Ajakan', 'textarea')}
-              <div className="grid md:grid-cols-2 gap-4">
-                {renderInput('ctaSection', 'buttonText', 'Teks Tombol Kontak')}
-                {renderInput('ctaSection', 'buttonLink', 'Tautan Tombol', 'select-route')}
-              </div>
             </div>
           </div>
         )}

@@ -20,7 +20,7 @@ export default async function HalamanBerandaAdminPage() {
     )
   }
 
-  const homePageData = await payload.findGlobal({ slug: 'home-page' })
+  const homePageData = await payload.findGlobal({ slug: 'home-page', locale: 'all' })
 
   return (
     <div className="space-y-6">

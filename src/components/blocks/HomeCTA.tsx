@@ -7,17 +7,11 @@ import { Button } from '../ui/Button'
 import type { CMSRecord } from '@/types'
 import Link from 'next/link'
 
-const getRoute = (val: string, def: string, locale: string) => {
-  const r = val || def
-  if (r === 'home') return `/${locale}`
-  return `/${locale}/${r}`
-}
-
 export function GalleryPreview({ homePage, mediaList, locale }: { homePage?: CMSRecord, mediaList: CMSRecord[], locale: 'id' | 'en' }) {
   const hp = (homePage?.gallerySection as any) || {}
   const title = hp.title || (locale === 'id' ? 'Galeri Visual' : 'Visual Gallery')
-  const buttonText = hp.buttonText || (locale === 'id' ? 'Lihat Semua Galeri' : 'View Full Gallery')
-  const buttonLink = getRoute(hp.buttonLink, 'galeri', locale)
+  const buttonText = locale === 'id' ? 'Lihat Semua Galeri' : 'View Full Gallery'
+  const buttonLink = `/${locale}/galeri`
   
   const hasMedia = mediaList && mediaList.length > 0
 
@@ -76,8 +70,8 @@ export function LocationCTA({ homePage, contactInfo, locale }: { homePage?: CMSR
   const description = hp.description || (locale === 'id' 
                     ? 'Klenteng Tek Hay Bio terbuka untuk umat, peziarah, dan pengunjung yang ingin mengenal lebih dekat sejarah dan budaya.'
                     : 'Tek Hay Bio Temple is open to devotees, pilgrims, and visitors who want to learn more about our history and culture.')
-  const buttonText = hp.buttonText || (locale === 'id' ? 'Hubungi Kami' : 'Contact Us')
-  const buttonLink = getRoute(hp.buttonLink, 'kontak', locale)
+  const buttonText = locale === 'id' ? 'Hubungi Kami' : 'Contact Us'
+  const buttonLink = `/${locale}/kontak`
 
   return (
     <Section className="bg-stone-50">

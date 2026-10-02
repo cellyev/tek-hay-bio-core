@@ -38,6 +38,7 @@ export const Posts: CollectionConfig = {
   },
   slug: 'posts',
   admin: {
+    group: 'Manajemen Konten',
     useAsTitle: 'title',
     defaultColumns: ['title', 'status', 'publishedAt'],
   },
@@ -114,7 +115,8 @@ export const Posts: CollectionConfig = {
     },
     {
       name: 'category',
-      type: 'text',
+      type: 'relationship',
+      relationTo: 'categories',
       admin: {
         position: 'sidebar',
       },

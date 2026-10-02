@@ -32,7 +32,7 @@ export async function NewsDetailPage({ locale, slug }: { locale: 'id' | 'en', sl
                 <span className="text-stone-500">{dateStr}</span>
                 {Boolean(post.category) && (
                   <span className="px-2 py-1 bg-stone-100 text-stone-700 font-medium rounded-full">
-                    {post.category as string}
+                    {typeof post.category === 'string' ? post.category : ((post.category as any)?.title?.id || (post.category as any)?.title?.en || (post.category as any)?.title || '')}
                   </span>
                 )}
               </div>

@@ -14,6 +14,7 @@ import { ActivityMedia } from './src/payload/collections/ActivityMedia'
 import { HistoryMedia } from './src/payload/collections/HistoryMedia'
 import { GalleryMedia } from './src/payload/collections/GalleryMedia'
 import { SiteMedia } from './src/payload/collections/SiteMedia'
+import { Categories } from './src/payload/collections/Categories'
 import { Posts } from './src/payload/collections/Posts'
 import { Activities } from './src/payload/collections/Activities'
 import { Services } from './src/payload/collections/Services'
@@ -34,7 +35,7 @@ export default buildConfig({
   admin: {
     user: Users.slug,
   },
-  collections: [Users, Media, NewsMedia, ServiceMedia, ActivityMedia, HistoryMedia, GalleryMedia, SiteMedia, Posts, Activities, Services],
+  collections: [Users, Media, NewsMedia, ServiceMedia, ActivityMedia, HistoryMedia, GalleryMedia, SiteMedia, Categories, Posts, Activities, Services],
   globals: [History, SiteSettings, ContactInformation, HomePage],
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'fallback-secret-key-for-development',

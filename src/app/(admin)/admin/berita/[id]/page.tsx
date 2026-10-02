@@ -17,6 +17,7 @@ export default async function EditNewsPage({ params }: { params: Promise<{ id: s
     const post = await payload.findByID({
       collection: 'posts',
       id,
+      locale: 'all',
     })
 
     return (

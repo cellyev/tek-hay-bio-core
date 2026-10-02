@@ -23,8 +23,8 @@ export default async function WebsiteInfoAdminPage() {
     )
   }
 
-  const contactData = await payload.findGlobal({ slug: 'contact-information' })
-  const siteData = await payload.findGlobal({ slug: 'site-settings' })
+  const contactData = await payload.findGlobal({ slug: 'contact-information', locale: 'all' })
+  const siteData = await payload.findGlobal({ slug: 'site-settings', locale: 'all' })
 
   return (
     <div className="space-y-6">
