@@ -6,10 +6,25 @@ import { MediaImage } from '../ui/MediaImage'
 import { Button } from '../ui/Button'
 import type { CMSRecord } from '@/types'
 
-export function ShortHistory({ history, locale }: { history: CMSRecord, locale: 'id' | 'en' }) {
-  if (!history || !history.title) return null
+const getRoute = (val: string, def: string, locale: string) => {
+  const r = val || def
+  if (r === 'home') return `/${locale}`
+  return `/${locale}/${r}`
+}
+
+export function ShortHistory({ homePage, history, locale }: { homePage?: CMSRecord, history: CMSRecord, locale: 'id' | 'en' }) {
+  const hp = (homePage?.historySection as any) || {}
   
-  const timeline = history.timeline as CMSRecord[] | undefined
+  const heading = hp.heading || (locale === 'id' ? 'Jejak Waktu' : 'Footprints of Time')
+  const title = hp.title || (history?.title as string) || ''
+  const description = hp.description || (history?.shortDescription as string) || 'Jelajahi garis waktu yang membentuk identitas kami.'
+  const buttonText = hp.buttonText || (locale === 'id' ? 'Baca Sejarah Lengkap' : 'Read Full History')
+  const buttonLink = getRoute(hp.buttonLink, 'sejarah', locale)
+  
+  const timeline = history?.timeline as CMSRecord[] | undefined
+  const displayImage = hp.image || (timeline && timeline[0]?.image) || null
+
+  if (!title && !history?.title) return null
 
   return (
     <Section className="bg-white">
@@ -17,24 +32,23 @@ export function ShortHistory({ history, locale }: { history: CMSRecord, locale: 
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <h2 className="text-sm font-bold tracking-widest text-primary uppercase">
-              {locale === 'id' ? 'Jejak Waktu' : 'Footprints of Time'}
+              {heading}
             </h2>
             <h3 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 leading-tight">
-              {history.title as string}
+              {title}
             </h3>
-            <p className="text-lg text-stone-600 leading-relaxed">
-              {(history.shortDescription as string) || 'Jelajahi garis waktu yang membentuk identitas kami.'}
+            <p className="text-lg text-stone-600 leading-relaxed whitespace-pre-line">
+              {description}
             </p>
             <div className="pt-4">
-              <Button href={`/${locale}/sejarah`} variant="outline">
-                {locale === 'id' ? 'Baca Sejarah Lengkap' : 'Read Full History'}
+              <Button href={buttonLink} variant="outline">
+                {buttonText}
               </Button>
             </div>
           </div>
           <div className="relative aspect-square md:aspect-[4/3] rounded-lg overflow-hidden shadow-lg bg-stone-100">
-            {/* If history timeline has images, use the first one, else empty state */}
-            {timeline && timeline[0]?.image ? (
-              <MediaImage media={timeline[0].image as CMSRecord} fill sizes="(max-width: 768px) 100vw, 50vw" />
+            {displayImage ? (
+              <MediaImage media={displayImage as CMSRecord} fill sizes="(max-width: 768px) 100vw, 50vw" />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-stone-400 p-8 text-center">
                 <span className="font-serif italic text-xl">Arsip Visual</span>
@@ -47,32 +61,47 @@ export function ShortHistory({ history, locale }: { history: CMSRecord, locale: 
   )
 }
 
-export function Uniqueness({ locale }: { locale: 'id' | 'en' }) {
-  // Driven by editorial layout. Since uniqueness isn't a dedicated CMS collection, we create an empty/fallback structure that can be fleshed out later or populated by specific posts.
+export function Uniqueness({ homePage, locale }: { homePage?: CMSRecord, locale: 'id' | 'en' }) {
+  const hp = (homePage?.uniquenessSection as any) || {}
+  
+  const title = hp.title || (locale === 'id' ? 'Identitas & Nilai Luhur' : 'Identity & Noble Values')
+  const description = hp.description || (locale === 'id' 
+              ? 'Mengenal lebih dekat ciri khas arsitektur, filosofi, dan tradisi yang dilestarikan.'
+              : 'Discovering the unique architecture, philosophy, and preserved traditions.')
+  
+  const defaultFeatures = [
+    { title: locale === 'id' ? 'Warisan Budaya' : 'Cultural Heritage', image: null },
+    { title: locale === 'id' ? 'Filosofi Arsitektur' : 'Architectural Philosophy', image: null },
+    { title: locale === 'id' ? 'Tradisi Leluhur' : 'Ancestral Traditions', image: null }
+  ]
+  const features = (hp.features && hp.features.length > 0) ? hp.features : defaultFeatures
+
   return (
     <Section className="bg-stone-900 text-stone-50 border-y border-stone-800">
       <Container>
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-white">
-            {locale === 'id' ? 'Identitas & Nilai Luhur' : 'Identity & Noble Values'}
+            {title}
           </h2>
           <div className="w-16 h-1 bg-primary mx-auto" />
-          <p className="text-stone-400 text-lg">
-            {locale === 'id' 
-              ? 'Mengenal lebih dekat ciri khas arsitektur, filosofi, dan tradisi yang dilestarikan.'
-              : 'Discovering the unique architecture, philosophy, and preserved traditions.'}
+          <p className="text-stone-400 text-lg whitespace-pre-line">
+            {description}
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
-          {[1, 2, 3].map((item) => (
-            <div key={item} className="space-y-4 text-center">
+          {features.map((item: any, i: number) => (
+            <div key={i} className="space-y-4 text-center">
               <div className="aspect-[3/4] bg-stone-800 rounded-md overflow-hidden relative border border-stone-700">
-                 <div className="absolute inset-0 flex items-center justify-center text-stone-600">
-                   <span className="font-serif italic">Detail Arsitektur</span>
-                 </div>
+                 {item.image ? (
+                   <MediaImage media={item.image as CMSRecord} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
+                 ) : (
+                   <div className="absolute inset-0 flex items-center justify-center text-stone-600">
+                     <span className="font-serif italic">Detail Arsitektur</span>
+                   </div>
+                 )}
               </div>
               <h3 className="font-bold text-lg text-stone-200">
-                {locale === 'id' ? 'Warisan Budaya' : 'Cultural Heritage'}
+                {item.title}
               </h3>
             </div>
           ))}

@@ -2,9 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { GlobalConfig } from 'payload'
 import { isAdmin } from '../access/roles'
+import { revalidateGlobal } from '../hooks/revalidate'
 
 export const ContactInformation: GlobalConfig = {
   slug: 'contact-information',
+  hooks: {
+    afterChange: [revalidateGlobal()],
+  },
   access: {
     read: () => true,
     update: isAdmin,

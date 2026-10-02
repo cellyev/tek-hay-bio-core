@@ -1,7 +1,13 @@
 import type { CollectionConfig } from 'payload';
 import { isAdminOrEditor } from '../access/roles';
 
+import { revalidateCollection } from '../hooks/revalidate'
+
 export const GalleryMedia: CollectionConfig = {
+  hooks: {
+    afterChange: [revalidateCollection('gallery')],
+    afterDelete: [revalidateCollection('gallery')],
+  },
   slug: 'gallery-media',
   access: {
     read: () => true,

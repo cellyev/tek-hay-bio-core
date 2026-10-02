@@ -7,15 +7,19 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { revalidatePath } from 'next/cache'
 
-export async function saveGlobalAction(slug: 'history' | 'site-settings' | 'contact-information', data: any) {
+export async function saveGlobalAction(slug: 'history' | 'site-settings' | 'contact-information' | 'home-page', data: any) {
   try {
     const payload = await getPayload({ config: configPromise })
     const { user } = await payload.auth({ headers: await headers() })
     if (!user) throw new Error('Unauthorized')
 
-    // Only super_admin can edit site-settings or contact-information
-    if (slug !== 'history' && user.role !== 'super_admin') {
+    // Enforce role checks matching Payload config
+    if ((slug === 'site-settings' || slug === 'contact-information') && user.role !== 'super_admin') {
       throw new Error('Hanya Super Admin yang dapat mengubah pengaturan ini.')
+    }
+    
+    if (slug === 'home-page' && user.role !== 'admin' && user.role !== 'super_admin') {
+      throw new Error('Hanya Admin yang dapat mengubah halaman beranda.')
     }
 
     await payload.updateGlobal({

@@ -37,17 +37,13 @@ export async function getHomepageData(locale: 'id' | 'en') {
   const mediaRes = await payload.find({
     collection: 'gallery-media',
     limit: 6,
-    // Try to fetch images that might be good for a gallery preview
-    where: { 
-      or: [
-        { category: { equals: 'building' } },
-        { category: { equals: 'interior' } },
-        { category: { equals: 'traditions' } }
-      ]
-    },
+    sort: '-createdAt',
   })
 
+  const homePage = await payload.findGlobal({ slug: 'home-page', locale })
+
   return {
+    homePage,
     siteSettings,
     contactInfo,
     history,

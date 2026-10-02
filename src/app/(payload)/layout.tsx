@@ -8,7 +8,7 @@ import { importMap } from "./admin-payload/importMap";
 
 const serverFunction = async function (args: any) {
   'use server'
-  return handleServerFunctions(args)
+  return handleServerFunctions({ ...args, config: configPromise })
 }
 
 type Args = {

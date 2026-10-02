@@ -1,4 +1,4 @@
-﻿import React from 'react'
+import React from 'react'
 import { getHomepageData } from '@/modules/home/queries'
 import { Hero, Introduction } from '@/components/blocks/HomeHero'
 import { ShortHistory, Uniqueness } from '@/components/blocks/HomeHistory'
@@ -25,6 +25,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   // Note: if MongoDB is down during build, this query could fail. 
   // We use try/catch to gracefully render empty states instead of breaking the build.
   let data: Record<string, unknown> = {
+    homePage: {},
     siteSettings: {},
     contactInfo: {},
     history: {},
@@ -40,17 +41,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     console.error('Failed to fetch homepage data:', error)
   }
 
+  const hp = data.homePage as CMSRecord
+
   return (
     <>
-      <Hero siteSettings={data.siteSettings as CMSRecord} locale={locale} />
-      <Introduction siteSettings={data.siteSettings as CMSRecord} locale={locale} />
-      <ShortHistory history={data.history as CMSRecord} locale={locale} />
-      <Uniqueness locale={locale} />
-      <ServicesList services={data.services as CMSRecord[]} locale={locale} />
-      <ActivitiesList activities={data.activities as CMSRecord[]} locale={locale} />
-      <NewsList posts={data.posts as CMSRecord[]} locale={locale} />
-      <GalleryPreview mediaList={data.media as CMSRecord[]} locale={locale} />
-      <LocationCTA contactInfo={data.contactInfo as CMSRecord} locale={locale} />
+      <Hero homePage={hp} siteSettings={data.siteSettings as CMSRecord} locale={locale} />
+      <Introduction homePage={hp} siteSettings={data.siteSettings as CMSRecord} locale={locale} />
+      <ShortHistory homePage={hp} history={data.history as CMSRecord} locale={locale} />
+      <Uniqueness homePage={hp} locale={locale} />
+      <ServicesList homePage={hp} services={data.services as CMSRecord[]} locale={locale} />
+      <ActivitiesList homePage={hp} activities={data.activities as CMSRecord[]} locale={locale} />
+      <NewsList homePage={hp} posts={data.posts as CMSRecord[]} locale={locale} />
+      <GalleryPreview homePage={hp} mediaList={data.media as CMSRecord[]} locale={locale} />
+      <LocationCTA homePage={hp} contactInfo={data.contactInfo as CMSRecord} locale={locale} />
     </>
   )
 }

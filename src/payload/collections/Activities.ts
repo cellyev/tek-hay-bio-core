@@ -4,7 +4,13 @@ import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '../access/roles'
 import { slugField } from '../../lib/slug/slugField'
 
+import { revalidateCollection } from '../hooks/revalidate'
+
 export const Activities: CollectionConfig = {
+  hooks: {
+    afterChange: [revalidateCollection('activities')],
+    afterDelete: [revalidateCollection('activities')],
+  },
   slug: 'activities',
   admin: {
     useAsTitle: 'title',

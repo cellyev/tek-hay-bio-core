@@ -7,8 +7,19 @@ import { Button } from '../ui/Button'
 import type { CMSRecord } from '@/types'
 import Link from 'next/link'
 
-export function GalleryPreview({ mediaList, locale }: { mediaList: CMSRecord[], locale: 'id' | 'en' }) {
-  if (!mediaList || mediaList.length === 0) return null
+const getRoute = (val: string, def: string, locale: string) => {
+  const r = val || def
+  if (r === 'home') return `/${locale}`
+  return `/${locale}/${r}`
+}
+
+export function GalleryPreview({ homePage, mediaList, locale }: { homePage?: CMSRecord, mediaList: CMSRecord[], locale: 'id' | 'en' }) {
+  const hp = (homePage?.gallerySection as any) || {}
+  const title = hp.title || (locale === 'id' ? 'Galeri Visual' : 'Visual Gallery')
+  const buttonText = hp.buttonText || (locale === 'id' ? 'Lihat Semua Galeri' : 'View Full Gallery')
+  const buttonLink = getRoute(hp.buttonLink, 'galeri', locale)
+  
+  const hasMedia = mediaList && mediaList.length > 0
 
   return (
     <Section className="bg-stone-900 text-stone-50 border-y border-stone-800">
@@ -16,42 +27,57 @@ export function GalleryPreview({ mediaList, locale }: { mediaList: CMSRecord[], 
         <div className="flex justify-between items-end mb-12">
           <div className="space-y-2">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-white">
-              {locale === 'id' ? 'Galeri Visual' : 'Visual Gallery'}
+              {title}
             </h2>
             <div className="w-16 h-1 bg-primary" />
+            {hp.description && <p className="text-stone-400 mt-4 whitespace-pre-line">{hp.description}</p>}
           </div>
-          <Link href={`/${locale}/galeri`} className="text-stone-300 font-medium hover:text-white hover:underline hidden sm:block">
-            {locale === 'id' ? 'Lihat Semua Galeri' : 'View Full Gallery'} →
+          <Link href={buttonLink} className="text-stone-300 font-medium hover:text-white hover:underline hidden sm:block">
+            {buttonText} &rarr;
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {mediaList.map((media, idx) => (
-            <div 
-              key={media.id as string} 
-              className={`relative bg-stone-800 rounded-lg overflow-hidden border border-stone-700 group ${idx === 0 ? 'col-span-2 row-span-2 aspect-square md:aspect-auto' : 'aspect-square'}`}
-            >
-              <MediaImage 
-                media={media} 
-                fill 
-                sizes="(max-width: 768px) 50vw, 33vw" 
-                className="transition-transform duration-700 group-hover:scale-110" 
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 md:p-6">
-                <span className="text-white font-medium drop-shadow-md line-clamp-2">
-                  {(media.title as string) || (media.alt as string) || 'Tek Hay Bio'}
-                </span>
+        {hasMedia ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            {mediaList.map((media, idx) => (
+              <div 
+                key={media.id as string} 
+                className={`relative bg-stone-800 rounded-lg overflow-hidden border border-stone-700 group ${idx === 0 ? 'col-span-2 row-span-2 aspect-square md:aspect-auto' : 'aspect-square'}`}
+              >
+                <MediaImage 
+                  media={media} 
+                  fill 
+                  sizes="(max-width: 768px) 50vw, 33vw" 
+                  className="transition-transform duration-700 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 md:p-6">
+                  <span className="text-white font-medium drop-shadow-md line-clamp-2">
+                    {(media.title as string) || (media.alt as string) || 'Tek Hay Bio'}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center p-12 text-stone-500 border border-stone-800 border-dashed rounded-lg bg-stone-800/50">
+            <span className="font-serif italic text-lg">{locale === 'id' ? 'Belum ada foto galeri' : 'No gallery photos yet'}</span>
+          </div>
+        )}
       </Container>
     </Section>
   )
 }
 
-export function LocationCTA({ contactInfo, locale }: { contactInfo: CMSRecord, locale: 'id' | 'en' }) {
+export function LocationCTA({ homePage, contactInfo, locale }: { homePage?: CMSRecord, contactInfo: CMSRecord, locale: 'id' | 'en' }) {
   if (!contactInfo || !contactInfo.address) return null
+
+  const hp = (homePage?.ctaSection as any) || {}
+  const title = hp.title || (locale === 'id' ? 'Rencanakan Kunjungan' : 'Plan Your Visit')
+  const description = hp.description || (locale === 'id' 
+                    ? 'Klenteng Tek Hay Bio terbuka untuk umat, peziarah, dan pengunjung yang ingin mengenal lebih dekat sejarah dan budaya.'
+                    : 'Tek Hay Bio Temple is open to devotees, pilgrims, and visitors who want to learn more about our history and culture.')
+  const buttonText = hp.buttonText || (locale === 'id' ? 'Hubungi Kami' : 'Contact Us')
+  const buttonLink = getRoute(hp.buttonLink, 'kontak', locale)
 
   return (
     <Section className="bg-stone-50">
@@ -61,13 +87,11 @@ export function LocationCTA({ contactInfo, locale }: { contactInfo: CMSRecord, l
             <div className="p-8 md:p-12 lg:p-16 space-y-8 flex flex-col justify-center">
               <div className="space-y-4">
                 <h2 className="text-3xl md:text-4xl font-serif font-bold text-stone-900">
-                  {locale === 'id' ? 'Rencanakan Kunjungan' : 'Plan Your Visit'}
+                  {title}
                 </h2>
                 <div className="w-16 h-1 bg-primary" />
-                <p className="text-lg text-stone-600 leading-relaxed">
-                  {locale === 'id' 
-                    ? 'Klenteng Tek Hay Bio terbuka untuk umat, peziarah, dan pengunjung yang ingin mengenal lebih dekat sejarah dan budaya.'
-                    : 'Tek Hay Bio Temple is open to devotees, pilgrims, and visitors who want to learn more about our history and culture.'}
+                <p className="text-lg text-stone-600 leading-relaxed whitespace-pre-line">
+                  {description}
                 </p>
               </div>
 
@@ -95,20 +119,29 @@ export function LocationCTA({ contactInfo, locale }: { contactInfo: CMSRecord, l
                     {locale === 'id' ? 'Buka di Google Maps' : 'Open in Google Maps'}
                   </Button>
                 )}
-                <Button href={`/${locale}/kontak`} variant="outline">
-                  {locale === 'id' ? 'Hubungi Kami' : 'Contact Us'}
+                <Button href={buttonLink} variant="outline">
+                  {buttonText}
                 </Button>
               </div>
             </div>
             
-            {/* Map Placeholder or Actual Map Image */}
+            {/* Map Placeholder or Actual Embed */}
             <div className="bg-stone-200 relative min-h-[300px] lg:min-h-full">
-              <div className="absolute inset-0 flex items-center justify-center p-8 text-center text-stone-500 bg-[url('/file.svg')] bg-center bg-no-repeat bg-[length:100px_100px] opacity-20">
-                <span className="sr-only">Map Graphic</span>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                 <span className="font-serif italic text-lg text-stone-600">Peta Lokasi Interaktif</span>
-              </div>
+              {contactInfo.googleMapsEmbedCode ? (
+                <div 
+                  className="absolute inset-0 w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0"
+                  dangerouslySetInnerHTML={{ __html: contactInfo.googleMapsEmbedCode as string }}
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-0 flex items-center justify-center p-8 text-center text-stone-500 bg-[url('/file.svg')] bg-center bg-no-repeat bg-[length:100px_100px] opacity-20">
+                    <span className="sr-only">Map Graphic</span>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                     <span className="font-serif italic text-lg text-stone-600">Peta Lokasi Interaktif</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

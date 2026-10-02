@@ -6,8 +6,18 @@ import { MediaImage } from '../ui/MediaImage'
 import Link from 'next/link'
 import type { CMSRecord } from '@/types'
 
-export function ServicesList({ services, locale }: { services: CMSRecord[], locale: 'id' | 'en' }) {
+const getRoute = (val: string, def: string, locale: string) => {
+  const r = val || def
+  if (r === 'home') return `/${locale}`
+  return `/${locale}/${r}`
+}
+
+export function ServicesList({ homePage, services, locale }: { homePage?: CMSRecord, services: CMSRecord[], locale: 'id' | 'en' }) {
   if (!services || services.length === 0) return null
+  
+  const hp = (homePage?.servicesSection as any) || {}
+  const title = hp.title || (locale === 'id' ? 'Layanan Kami' : 'Our Services')
+  const linkUrl = getRoute(hp.linkUrl, 'layanan', locale)
   
   return (
     <Section className="bg-stone-50">
@@ -15,11 +25,12 @@ export function ServicesList({ services, locale }: { services: CMSRecord[], loca
         <div className="flex justify-between items-end mb-12">
           <div className="space-y-2">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-stone-900">
-              {locale === 'id' ? 'Layanan Kami' : 'Our Services'}
+              {title}
             </h2>
             <div className="w-16 h-1 bg-primary" />
+            {hp.description && <p className="text-stone-600 mt-4 whitespace-pre-line">{hp.description}</p>}
           </div>
-          <Link href={`/${locale}/layanan`} className="text-primary font-medium hover:underline hidden sm:block">
+          <Link href={linkUrl} className="text-primary font-medium hover:underline hidden sm:block">
             {locale === 'id' ? 'Lihat Semua Layanan' : 'View All Services'} →
           </Link>
         </div>
@@ -38,7 +49,7 @@ export function ServicesList({ services, locale }: { services: CMSRecord[], loca
           ))}
         </div>
         <div className="mt-8 text-center sm:hidden">
-          <Link href={`/${locale}/layanan`} className="text-primary font-medium hover:underline">
+          <Link href={linkUrl} className="text-primary font-medium hover:underline">
             {locale === 'id' ? 'Lihat Semua Layanan' : 'View All Services'} →
           </Link>
         </div>
@@ -47,8 +58,12 @@ export function ServicesList({ services, locale }: { services: CMSRecord[], loca
   )
 }
 
-export function ActivitiesList({ activities, locale }: { activities: CMSRecord[], locale: 'id' | 'en' }) {
+export function ActivitiesList({ homePage, activities, locale }: { homePage?: CMSRecord, activities: CMSRecord[], locale: 'id' | 'en' }) {
   if (!activities || activities.length === 0) return null
+  
+  const hp = (homePage?.activitiesSection as any) || {}
+  const title = hp.title || (locale === 'id' ? 'Kegiatan Mendatang' : 'Upcoming Activities')
+  const linkUrl = getRoute(hp.linkUrl, 'kegiatan', locale)
   
   return (
     <Section className="bg-white border-t border-border">
@@ -56,11 +71,12 @@ export function ActivitiesList({ activities, locale }: { activities: CMSRecord[]
         <div className="flex justify-between items-end mb-12">
           <div className="space-y-2">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-stone-900">
-              {locale === 'id' ? 'Kegiatan Mendatang' : 'Upcoming Activities'}
+              {title}
             </h2>
             <div className="w-16 h-1 bg-primary" />
+            {hp.description && <p className="text-stone-600 mt-4 whitespace-pre-line">{hp.description}</p>}
           </div>
-          <Link href={`/${locale}/kegiatan`} className="text-primary font-medium hover:underline hidden sm:block">
+          <Link href={linkUrl} className="text-primary font-medium hover:underline hidden sm:block">
             {locale === 'id' ? 'Semua Kegiatan' : 'All Activities'} →
           </Link>
         </div>
@@ -89,8 +105,12 @@ export function ActivitiesList({ activities, locale }: { activities: CMSRecord[]
   )
 }
 
-export function NewsList({ posts, locale }: { posts: CMSRecord[], locale: 'id' | 'en' }) {
+export function NewsList({ homePage, posts, locale }: { homePage?: CMSRecord, posts: CMSRecord[], locale: 'id' | 'en' }) {
   if (!posts || posts.length === 0) return null
+  
+  const hp = (homePage?.newsSection as any) || {}
+  const title = hp.title || (locale === 'id' ? 'Berita Terkini' : 'Latest News')
+  const linkUrl = getRoute(hp.linkUrl, 'berita', locale)
   
   return (
     <Section className="bg-stone-50 border-t border-border">
@@ -98,11 +118,12 @@ export function NewsList({ posts, locale }: { posts: CMSRecord[], locale: 'id' |
         <div className="flex justify-between items-end mb-12">
           <div className="space-y-2">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-stone-900">
-              {locale === 'id' ? 'Berita Terkini' : 'Latest News'}
+              {title}
             </h2>
             <div className="w-16 h-1 bg-primary" />
+            {hp.description && <p className="text-stone-600 mt-4 whitespace-pre-line">{hp.description}</p>}
           </div>
-          <Link href={`/${locale}/berita`} className="text-primary font-medium hover:underline hidden sm:block">
+          <Link href={linkUrl} className="text-primary font-medium hover:underline hidden sm:block">
             {locale === 'id' ? 'Semua Berita' : 'All News'} →
           </Link>
         </div>

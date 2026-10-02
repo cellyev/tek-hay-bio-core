@@ -5,7 +5,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, FileText, CalendarDays, Box, Image as ImageIcon, History, Settings, Users, Menu, X, LogOut, Globe } from 'lucide-react'
+import { LayoutDashboard, FileText, CalendarDays, Box, Image as ImageIcon, History, Settings, Users, Menu, X, LogOut, Globe, Home } from 'lucide-react'
 
 export function AdminShell({ children, user }: { children: React.ReactNode, user: any }) {
   const pathname = usePathname()
@@ -20,6 +20,7 @@ export function AdminShell({ children, user }: { children: React.ReactNode, user
 
   const navItems = [
     { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { label: 'Halaman Beranda', href: '/admin/halaman-beranda', icon: Home },
     { label: 'Berita', href: '/admin/berita', icon: FileText },
     { label: 'Kegiatan', href: '/admin/kegiatan', icon: CalendarDays },
     { label: 'Layanan', href: '/admin/layanan', icon: Box },

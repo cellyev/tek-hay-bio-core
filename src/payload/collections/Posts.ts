@@ -29,7 +29,13 @@ import {
   UploadFeature,
 } from '@payloadcms/richtext-lexical'
 
+import { revalidateCollection } from '../hooks/revalidate'
+
 export const Posts: CollectionConfig = {
+  hooks: {
+    afterChange: [revalidateCollection('posts')],
+    afterDelete: [revalidateCollection('posts')],
+  },
   slug: 'posts',
   admin: {
     useAsTitle: 'title',

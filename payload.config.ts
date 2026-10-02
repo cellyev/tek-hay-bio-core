@@ -21,6 +21,7 @@ import { Services } from './src/payload/collections/Services'
 import { History } from './src/payload/globals/History'
 import { SiteSettings } from './src/payload/globals/SiteSettings'
 import { ContactInformation } from './src/payload/globals/ContactInformation'
+import { HomePage } from './src/payload/globals/HomePage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -34,7 +35,7 @@ export default buildConfig({
     user: Users.slug,
   },
   collections: [Users, Media, NewsMedia, ServiceMedia, ActivityMedia, HistoryMedia, GalleryMedia, SiteMedia, Posts, Activities, Services],
-  globals: [History, SiteSettings, ContactInformation],
+  globals: [History, SiteSettings, ContactInformation, HomePage],
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'fallback-secret-key-for-development',
   typescript: {

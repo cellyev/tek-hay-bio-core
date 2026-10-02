@@ -1,10 +1,14 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { GlobalConfig } from 'payload'
 import { isAdmin } from '../access/roles'
+import { revalidateGlobal } from '../hooks/revalidate'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
+  hooks: {
+    afterChange: [revalidateGlobal()],
+  },
   access: {
     read: () => true,
     update: isAdmin,
