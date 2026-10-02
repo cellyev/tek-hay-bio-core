@@ -71,7 +71,7 @@ export async function Footer({ locale }: { locale: 'id' | 'en' }) {
           </h3>
           <address className="not-italic text-sm space-y-2 text-stone-400">
             {contactInfo.address && <p>{contactInfo.address}</p>}
-            {contactInfo.phone && <p>Tel: {contactInfo.phone}</p>}
+            {contactInfo.phone && <p>WA: <a target="_blank" rel="noopener noreferrer" href={`https://wa.me/${(contactInfo.phone as string).replace(/\D/g, '').replace(/^0/, '62')}`} className="hover:text-white transition-colors">{contactInfo.phone}</a></p>}
             {contactInfo.email && <p>Email: {contactInfo.email}</p>}
           </address>
           

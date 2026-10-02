@@ -64,8 +64,8 @@ export async function ContactPage({ locale }: { locale: 'id' | 'en' }) {
                 <div className="space-y-4">
                   {Boolean(contactInfo.phone) && (
                     <p className="text-lg text-stone-600 flex items-center gap-3">
-                      <span className="font-bold w-24">Telepon</span>
-                      <a href={`tel:${contactInfo.phone as string}`} className="hover:text-primary transition-colors">{contactInfo.phone as string}</a>
+                      <span className="font-bold w-24">Telepon / WA</span>
+                      <a target="_blank" rel="noopener noreferrer" href={`https://wa.me/${(contactInfo.phone as string).replace(/\D/g, '').replace(/^0/, '62')}`} className="hover:text-primary transition-colors">{contactInfo.phone as string}</a>
                     </p>
                   )}
                   {Boolean(contactInfo.email) && (
