@@ -402,26 +402,48 @@ export function RitualCalendarView({
                     {/* Event Badges */}
                     <div className="mt-1 space-y-1 overflow-hidden">
                       {cell.occurrences.slice(0, 2).map((occ) => (
-                        <div
+                        <Link
                           key={occ.id}
-                          className="text-[10px] md:text-xs truncate px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors flex items-center gap-1"
-                          title={occ.title}
+                          href={`${activityBasePath}/${occ.slug}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                          }}
+                          className="text-[10px] md:text-xs truncate px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary hover:text-white transition-all flex items-center gap-1 group/item z-10 cursor-pointer shadow-none hover:shadow-sm"
+                          title={`${occ.title} — ${locale === 'id' ? 'Klik untuk membuka detail kegiatan' : 'Click to open activity details'}`}
                         >
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary group-hover/item:bg-white shrink-0 transition-colors" />
                           <span className="truncate">{occ.title}</span>
-                        </div>
+                        </Link>
                       ))}
                       {cell.occurrences.length > 2 && (
-                        <div className="text-[9px] md:text-[10px] text-stone-500 font-semibold px-1">
-                          +{cell.occurrences.length - 2} {locale === 'id' ? 'lainnya' : 'more'}
-                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleSelectDay(cell)
+                          }}
+                          className="text-[9px] md:text-[10px] text-stone-500 hover:text-primary font-semibold px-1 text-left w-full transition-colors cursor-pointer"
+                        >
+                          +{cell.occurrences.length - 2} {locale === 'id' ? 'lainnya (lihat)' : 'more (view)'}
+                        </button>
                       )}
                     </div>
 
                     {/* Indicator Dot on Mobile */}
                     {hasEvents && (
                       <div className="flex md:hidden justify-center mt-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        {cell.occurrences.length === 1 ? (
+                          <Link
+                            href={`${activityBasePath}/${cell.occurrences[0].slug}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="p-1 -m-1"
+                            title={cell.occurrences[0].title}
+                          >
+                            <span className="w-2 h-2 rounded-full bg-primary block" />
+                          </Link>
+                        ) : (
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        )}
                       </div>
                     )}
                   </div>
@@ -524,13 +546,16 @@ function ActivityCalendarCard({
       <div>
         {/* Optional Thumbnail if featuredImage exists */}
         {occ.featuredImage && (
-          <div className="aspect-[16/9] relative bg-stone-100 overflow-hidden border-b border-stone-100">
+          <Link
+            href={`${basePath}/${occ.slug}`}
+            className="block aspect-[16/9] relative bg-stone-100 overflow-hidden border-b border-stone-100"
+          >
             <MediaImage
               media={occ.featuredImage as CMSRecord}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
-          </div>
+          </Link>
         )}
 
         <div className="p-5 space-y-3">
