@@ -1,18 +1,28 @@
 import React from 'react'
-import { getBySlug } from './queries'
+import { getBySlugWithAlternates } from './queries'
 import { Container, Section } from '@/components/ui/Layout'
 import { MediaImage } from '@/components/ui/MediaImage'
 import { RichText } from '@/components/ui/RichText'
 import type { CMSRecord } from '@/types'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
+import { SetAlternateLanguage } from '@/components/layout/SetAlternateLanguage'
 
 export async function NewsDetailPage({ locale, slug }: { locale: 'id' | 'en', slug: string }) {
-  const post = await getBySlug('posts', slug, locale)
+  const { doc: post, alternateSlug, needsRedirect, redirectUrl } = await getBySlugWithAlternates('posts', slug, locale)
+
+  if (needsRedirect && redirectUrl) {
+    redirect(redirectUrl)
+  }
   
   if (!post) {
     notFound()
   }
+
+  const otherLocale = locale === 'id' ? 'en' : 'id'
+  const alternatePath = otherLocale === 'id'
+    ? `/id/berita/${alternateSlug || post.slug}`
+    : `/en/news/${alternateSlug || post.slug}`
 
   const dateStr = post.publishedAt 
     ? new Date(post.publishedAt as string).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
@@ -20,6 +30,7 @@ export async function NewsDetailPage({ locale, slug }: { locale: 'id' | 'en', sl
 
   return (
     <article>
+      <SetAlternateLanguage path={alternatePath} />
       <Section className="bg-white pb-0">
         <Container>
           <div className="max-w-3xl mx-auto space-y-6 pt-8">

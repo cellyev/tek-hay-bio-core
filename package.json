@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsx --test tests/unit/activities.test.mjs tests/unit/albums.test.mjs tests/unit/calendar.test.mjs"
+    "test": "tsx --test tests/unit/activities.test.mjs tests/unit/albums.test.mjs tests/unit/calendar.test.mjs tests/unit/alternateSlugs.test.mjs"
   },
   "dependencies": {
     "@lexical/code": "^0.50.0",

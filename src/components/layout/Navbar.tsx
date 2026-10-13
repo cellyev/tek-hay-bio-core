@@ -7,9 +7,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X, Globe } from 'lucide-react'
 
+import { useLanguageSwitcher } from './LanguageSwitcherContext'
+
 export function Navbar({ locale }: { locale: 'id' | 'en' }) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  const { alternatePath } = useLanguageSwitcher()
 
   // Map of routes
   const navLinks = [
@@ -26,19 +29,43 @@ export function Navbar({ locale }: { locale: 'id' | 'en' }) {
   // Language Switcher Logic
   const getAlternatePath = () => {
     const targetLocale = locale === 'id' ? 'en' : 'id'
-    
-    // Find if the current path matches any known route
+
+    // 1. If dynamic page provided an explicit localized alternate path (e.g. translated slug)
+    if (alternatePath) {
+      return alternatePath
+    }
+
+    // 2. Find if the current path matches any known route
     const currentRoute = navLinks.find(link => link.id === pathname || link.en === pathname)
-    
+
     if (currentRoute) {
       return targetLocale === 'id' ? currentRoute.id : currentRoute.en
     }
-    
-    // Fallback: Just replace the locale prefix if it's dynamic (e.g. news slug)
-    // NOTE: This basic fallback won't map slugs, but we don't need dynamic slugs fully mapped for Phase 3.1
+
+    // 3. Fallback for dynamic subpaths with correct segment translations
+    if (pathname.startsWith('/id/berita/')) {
+      return pathname.replace('/id/berita/', '/en/news/')
+    }
+    if (pathname.startsWith('/en/news/')) {
+      return pathname.replace('/en/news/', '/id/berita/')
+    }
+    if (pathname.startsWith('/id/kegiatan/')) {
+      return pathname.replace('/id/kegiatan/', '/en/activities/')
+    }
+    if (pathname.startsWith('/en/activities/')) {
+      return pathname.replace('/en/activities/', '/id/kegiatan/')
+    }
+    if (pathname.startsWith('/id/galeri/')) {
+      return pathname.replace('/id/galeri/', '/en/gallery/')
+    }
+    if (pathname.startsWith('/en/gallery/')) {
+      return pathname.replace('/en/gallery/', '/id/galeri/')
+    }
+
+    // 4. Fallback: Just replace the locale prefix if it's dynamic
     if (pathname.startsWith('/id/')) return pathname.replace('/id/', '/en/')
     if (pathname.startsWith('/en/')) return pathname.replace('/en/', '/id/')
-    
+
     return `/${targetLocale}`
   }
 

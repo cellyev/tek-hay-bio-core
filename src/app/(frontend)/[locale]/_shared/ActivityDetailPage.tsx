@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
-import { getBySlug } from './queries'
+import { getBySlugWithAlternates } from './queries'
 import { Container, Section } from '@/components/ui/Layout'
 import { MediaImage } from '@/components/ui/MediaImage'
 import { RichText } from '@/components/ui/RichText'
 import type { CMSRecord } from '@/types'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
+import { SetAlternateLanguage } from '@/components/layout/SetAlternateLanguage'
 import {
   getActivityCategoryLabel,
   getActivityRecurrenceLabel,
@@ -29,11 +30,25 @@ import {
 } from 'lucide-react'
 
 export async function ActivityDetailPage({ locale, slug }: { locale: 'id' | 'en'; slug: string }) {
-  const activity = (await getBySlug('activities', slug, locale)) as any
+  const { doc: activity, alternateSlug, needsRedirect, redirectUrl } = (await getBySlugWithAlternates(
+    'activities',
+    slug,
+    locale
+  )) as any
+
+  if (needsRedirect && redirectUrl) {
+    redirect(redirectUrl)
+  }
 
   if (!activity) {
     notFound()
   }
+
+  const otherLocale = locale === 'id' ? 'en' : 'id'
+  const alternatePath =
+    otherLocale === 'id'
+      ? `/id/kegiatan/${alternateSlug || activity.slug}`
+      : `/en/activities/${alternateSlug || activity.slug}`
 
   const gregorianDate = formatGregorianDateRange(activity.date, activity.endDate, locale)
   const lunarDate = formatLunarDate(activity, locale)
@@ -59,6 +74,7 @@ export async function ActivityDetailPage({ locale, slug }: { locale: 'id' | 'en'
 
   return (
     <article className="bg-stone-50 min-h-screen">
+      <SetAlternateLanguage path={alternatePath} />
       {/* Hero Banner Header */}
       <div className="w-full min-h-[45vh] md:min-h-[55vh] relative bg-stone-900 flex items-end">
         <MediaImage

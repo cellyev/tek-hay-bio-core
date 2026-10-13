@@ -54,6 +54,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   }
 }
 
+import { LanguageSwitcherProvider } from '@/components/layout/LanguageSwitcherContext'
+
 export default async function LocaleLayout({
   children,
   params,
@@ -70,12 +72,12 @@ export default async function LocaleLayout({
   const locale = resolvedParams.locale as 'id' | 'en'
 
   return (
-    <>
+    <LanguageSwitcherProvider>
       <Navbar locale={locale} />
       <main className="flex-1">
         {children}
       </main>
       <Footer locale={locale} />
-    </>
+    </LanguageSwitcherProvider>
   )
 }

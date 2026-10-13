@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
-import { getBySlug } from './queries'
+import { getBySlugWithAlternates } from './queries'
 import { Container, Section } from '@/components/ui/Layout'
 import { MediaImage } from '@/components/ui/MediaImage'
 import type { CMSRecord } from '@/types'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
+import { SetAlternateLanguage } from '@/components/layout/SetAlternateLanguage'
 import {
   getAlbumCategoryLabel,
   formatEventDateRange,
@@ -15,11 +16,25 @@ import { AlbumMediaGallery } from '@/components/gallery/AlbumMediaGallery'
 import { Calendar, Layers, Image as ImageIcon, Video } from 'lucide-react'
 
 export async function AlbumDetailPage({ locale, slug }: { locale: 'id' | 'en'; slug: string }) {
-  const album = (await getBySlug('albums', slug, locale)) as any
+  const { doc: album, alternateSlug, needsRedirect, redirectUrl } = (await getBySlugWithAlternates(
+    'albums',
+    slug,
+    locale
+  )) as any
+
+  if (needsRedirect && redirectUrl) {
+    redirect(redirectUrl)
+  }
 
   if (!album || album.status !== 'published') {
     notFound()
   }
+
+  const otherLocale = locale === 'id' ? 'en' : 'id'
+  const alternatePath =
+    otherLocale === 'id'
+      ? `/id/galeri/${alternateSlug || album.slug}`
+      : `/en/gallery/${alternateSlug || album.slug}`
 
   const categoryLabel = getAlbumCategoryLabel(album.category, locale)
   const dateFormatted = formatEventDateRange(album.eventDate, album.eventEndDate, locale)
@@ -28,6 +43,7 @@ export async function AlbumDetailPage({ locale, slug }: { locale: 'id' | 'en'; s
 
   return (
     <article className="bg-stone-50 min-h-screen">
+      <SetAlternateLanguage path={alternatePath} />
       {/* Header Banner */}
       <div className="w-full min-h-[40vh] md:min-h-[50vh] relative bg-stone-900 flex items-end">
         {album.coverImage && (
