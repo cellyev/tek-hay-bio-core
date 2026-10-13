@@ -27,6 +27,7 @@ export async function Footer({ locale }: { locale: 'id' | 'en' }) {
     { href: locale === 'id' ? '/id/sejarah' : '/en/history', label: locale === 'id' ? 'Sejarah' : 'History' },
     { href: locale === 'id' ? '/id/layanan' : '/en/services', label: locale === 'id' ? 'Layanan' : 'Services' },
     { href: locale === 'id' ? '/id/kegiatan' : '/en/activities', label: locale === 'id' ? 'Kegiatan' : 'Activities' },
+    { href: locale === 'id' ? '/id/kalender-ritual' : '/en/ritual-calendar', label: locale === 'id' ? 'Kalender Ritual' : 'Calendar' },
     { href: locale === 'id' ? '/id/berita' : '/en/news', label: locale === 'id' ? 'Berita' : 'News' },
     { href: locale === 'id' ? '/id/galeri' : '/en/gallery', label: locale === 'id' ? 'Galeri' : 'Gallery' },
   ]

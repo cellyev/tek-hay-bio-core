@@ -42,15 +42,21 @@ export const revalidateCollection = (collectionName: string): CollectionAfterCha
     if (collectionName === 'activities') {
       revalidatePath('/id/kegiatan', 'page')
       revalidatePath('/en/activities', 'page')
+      revalidatePath('/id/kalender-ritual', 'page')
+      revalidatePath('/en/ritual-calendar', 'page')
       if (doc.slug) {
         revalidatePath(`/id/kegiatan/${doc.slug}`, 'page')
         revalidatePath(`/en/activities/${doc.slug}`, 'page')
       }
     }
     
-    if (collectionName === 'gallery') {
+    if (collectionName === 'gallery' || collectionName === 'albums' || collectionName === 'gallery-media') {
       revalidatePath('/id/galeri', 'page')
       revalidatePath('/en/gallery', 'page')
+      if (doc.slug) {
+        revalidatePath(`/id/galeri/${doc.slug}`, 'page')
+        revalidatePath(`/en/gallery/${doc.slug}`, 'page')
+      }
     }
     
     return doc

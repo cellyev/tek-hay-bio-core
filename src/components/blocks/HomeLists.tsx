@@ -57,7 +57,7 @@ export function ActivitiesList({ homePage, activities, locale }: { homePage?: CM
   
   const hp = (homePage?.activitiesSection as any) || {}
   const title = hp.title || (locale === 'id' ? 'Kegiatan Mendatang' : 'Upcoming Activities')
-  const linkUrl = `/${locale}/kegiatan`
+  const linkUrl = `/${locale}/${locale === 'id' ? 'kegiatan' : 'activities'}`
   
   return (
     <Section className="bg-white border-t border-border">
@@ -76,23 +76,31 @@ export function ActivitiesList({ homePage, activities, locale }: { homePage?: CM
         </div>
         
         <div className="grid lg:grid-cols-3 gap-8">
-          {activities.map((activity) => (
-            <Link href={`/${locale}/kegiatan/${activity.slug}`} key={activity.id as string} className="group flex flex-col sm:flex-row lg:flex-col gap-6">
-              <div className="w-full sm:w-2/5 lg:w-full aspect-[4/3] relative bg-stone-100 rounded-lg overflow-hidden shrink-0 border border-border">
-                <MediaImage media={activity.featuredImage as CMSRecord} fill sizes="(max-width: 1024px) 40vw, 33vw" className="transition-transform duration-500 group-hover:scale-105" />
-              </div>
-              <div className="space-y-2">
-                <div className="text-xs font-bold tracking-wider text-primary uppercase">
-                  {activity.date ? new Date(activity.date as string).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
+          {activities.map((activity) => {
+            const dateStr = activity.date
+              ? new Date(activity.date as string).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+              : (activity.lunarDay && activity.lunarMonth
+                  ? (locale === 'id' ? `Tgl ${activity.lunarDay} Bulan ${activity.lunarMonth} Imlek` : `Day ${activity.lunarDay}, Month ${activity.lunarMonth} Lunar`)
+                  : (locale === 'id' ? 'Jadwal Menunggu Konfirmasi' : 'Schedule Pending Confirmation'))
+
+            return (
+              <Link href={`/${locale}/${locale === 'id' ? 'kegiatan' : 'activities'}/${activity.slug}`} key={activity.id as string} className="group flex flex-col sm:flex-row lg:flex-col gap-6">
+                <div className="w-full sm:w-2/5 lg:w-full aspect-[4/3] relative bg-stone-100 rounded-lg overflow-hidden shrink-0 border border-border">
+                  <MediaImage media={activity.featuredImage as CMSRecord} fill sizes="(max-width: 1024px) 40vw, 33vw" className="transition-transform duration-500 group-hover:scale-105" />
                 </div>
-                <h3 className="font-bold text-xl text-stone-900 group-hover:text-primary transition-colors line-clamp-2">
-                  {activity.title as string}
-                </h3>
-                {Boolean(activity.location) && <div className="text-sm text-stone-500">📍 {activity.location as string}</div>}
-                <p className="text-stone-600 line-clamp-2">{activity.shortDescription as string}</p>
-              </div>
-            </Link>
-          ))}
+                <div className="space-y-2">
+                  <div className="text-xs font-bold tracking-wider text-primary uppercase">
+                    {dateStr}
+                  </div>
+                  <h3 className="font-bold text-xl text-stone-900 group-hover:text-primary transition-colors line-clamp-2">
+                    {activity.title as string}
+                  </h3>
+                  {Boolean(activity.location) && <div className="text-sm text-stone-500">📍 {activity.location as string}</div>}
+                  <p className="text-stone-600 line-clamp-2">{activity.shortDescription as string}</p>
+                </div>
+              </Link>
+            )
+          })}
         </div>
       </Container>
     </Section>

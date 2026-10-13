@@ -151,6 +151,39 @@ export async function getMediaUsage(
     }
   }
 
+  if (mediaCollection === 'gallery-media') {
+    try {
+      const albums = await payload.find({
+        collection: 'albums' as any,
+        limit: 1000,
+        locale: 'all',
+      })
+      for (const album of albums.docs) {
+        let isUsed = false
+        if (album.coverImage === mediaId || (album.coverImage as any)?.id === mediaId) {
+          isUsed = true
+        }
+        if (!isUsed && Array.isArray((album as any).mediaItems)) {
+          for (const item of (album as any).mediaItems) {
+            if (item.media === mediaId || (item.media as any)?.id === mediaId) {
+              isUsed = true
+              break
+            }
+          }
+        }
+        if (isUsed) {
+          references.push({
+            type: 'Album Galeri',
+            id: album.id as string,
+            title: (typeof album.title === 'string' ? album.title : (album.title as any)?.id || (album.title as any)?.en || 'Tanpa Judul'),
+          })
+        }
+      }
+    } catch (e) {
+      console.error('Error checking album media usage:', e)
+    }
+  }
+
   // Deduplicate references just in case (e.g. found in both locales for same post)
   const uniqueRefs = references.filter((ref, index, self) =>
     index === self.findIndex((t) => (

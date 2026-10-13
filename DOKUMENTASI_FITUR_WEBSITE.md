@@ -142,17 +142,26 @@ Website dirancang dengan arsitektur dwibahasa bawaan (*first-class international
   - Konten Rich Text: Isi artikel lengkap dengan dukungan paragraf, subjudul (H1-H6), daftar berpoin/bernomor, kutipan (*blockquote*), garis pembatas, tautan eksternal, dan gambar sisipan.
 - **Perilaku Khusus:** Jika slug berita tidak ditemukan atau status berita masih berstatus `draft`, server langsung melempar respon `notFound()` (halaman 404), mencegah kebocoran konten yang belum dipublikasikan.
 
-### 3.6 Galeri
+### 3.6 Galeri & Album Dokumentasi
 - **URL / Rute Aktual:**
-  - Versi ID: `/[locale]/galeri` (misal: `/id/galeri`)
-  - Versi EN: `/[locale]/gallery` (misal: `/en/gallery`)
-- **Tujuan Halaman:** Menampilkan repositori dokumentasi foto visual keindahan klenteng, ornamen, upacara, dan kegiatan keagamaan.
-- **Sumber Data:** Koleksi `gallery-media` diurutkan berdasarkan `-updatedAt` dengan paginasi (12 foto per halaman).
-- **Komponen Utama:**
-  - Grid Galeri Responsif: Penataan foto dalam format kotak 1:1 (2 kolom di mobile, 3 kolom di tablet, 4 kolom di desktop).
-  - Hover Overlay Interaktif: Efek transisi saat kursor diarahkan ke foto yang menampilkan judul foto/alt text dan kategori foto (misal: *Building*, *Interior*, *Activities*, *History*, *Traditions*).
-  - Komponen Paginasi: Kontrol navigasi halaman galeri.
-- **Fitur Pengunjung:** Eksplorasi foto visual beresolusi tinggi dengan penyesuaian ukuran otomatis melalui komponen `MediaImage`.
+  - **Daftar Album:**
+    - Versi ID: `/[locale]/galeri` (misal: `/id/galeri`)
+    - Versi EN: `/[locale]/gallery` (misal: `/en/gallery`)
+  - **Detail Album Dokumentasi:**
+    - Versi ID: `/[locale]/galeri/[slug]` (misal: `/id/galeri/acara-tong-jiu-pia-2026`)
+    - Versi EN: `/[locale]/gallery/[slug]` (misal: `/en/gallery/tong-jiu-pia-celebration-2026`)
+- **Tujuan Halaman:** Menyajikan album-album dokumentasi kegiatan klenteng, perayaan budaya, ritual, dan sembahyang leluhur yang berisi kumpulan foto dan video berkualitas tinggi.
+- **Sumber Data:** Koleksi `albums` (dengan relasi mendalam ke koleksi `gallery-media`), difilter berdasarkan status `published` dan diurutkan berdasarkan tanggal acara terbaru (`-eventDate`).
+- **Komponen Utama Daftar Album (`GalleryPage.tsx`):**
+  - **Filter Kategori Album:** Tombol pill interaktif untuk memfilter album berdasarkan kategori terstruktur (*Ritual*, *Sembahyang Leluhur*, *Hari Kebesaran Dewa*, *Perayaan Budaya*, *Kegiatan Sosial*, *Dokumentasi Lainnya*).
+  - **Kartu Album Dokumentasi:** Kartu visual sinematik dengan gambar sampul (*Cover Image*), lencana kategori terjemahan dwibahasa, lencana rentang tanggal pelaksanaan, jumlah item media (foto & video), serta judul dan deskripsi album.
+  - **Paginasi Album:** Navigasi halaman album responsif.
+- **Komponen Utama Detail Album (`AlbumDetailPage.tsx` & `AlbumMediaGallery.tsx`):**
+  - **Header & Deskripsi Album:** Judul dwibahasa, tanggal acara terformat, kategori, dan deskripsi acara.
+  - **Tab Filter Tipe Media:** Tab interaktif untuk menyaring tampilan (*Semua Media*, *Hanya Foto*, *Hanya Video*) lengkap dengan counter jumlah berkas.
+  - **Grid Media Responsif:** Penataan media dalam grid dinamis dengan rasio proporsional, thumbnail video cerdas, badge penanda video dan estimasi durasi.
+  - **Pemutar Video Terintegrasi:** Tag HTML5 `<video controls preload="metadata" playsInline>` yang ramah bandwidth (hanya mengunduh metadata sampai tombol putar ditekan) dan mendukung pemutaran langsung.
+  - **Lightbox Layar Penuh Interaktif:** Modal tampilan penuh saat foto/video diklik, mendukung tombol navigasi Sebelumnya/Berikutnya, navigasi keyboard (Panah Kiri/Kanan, Escape), zoom gambar, dan deskripsi/caption media.
 
 ### 3.7 Kegiatan
 - **URL / Rute Aktual:**
@@ -177,7 +186,27 @@ Website dirancang dengan arsitektur dwibahasa bawaan (*first-class international
   - Paragraf Pengantar (*Lead Paragraph*): Teks deskripsi pembuka berukuran besar.
   - Konten Penjelasan Acara: Uraian rinci yang dirender melalui Lexical Rich Text.
 
-### 3.9 Layanan
+### 3.9 Kalender Ritual dan Perayaan
+- **URL / Rute Aktual:**
+  - Versi ID: `/[locale]/kalender-ritual` (misal: `/id/kalender-ritual`)
+  - Versi EN: `/[locale]/ritual-calendar` (misal: `/en/ritual-calendar`)
+- **Tujuan Halaman:** Menyajikan panduan lengkap penanggalan ritual keagamaan, sembahyang leluhur, hari kebesaran dewa, dan perayaan budaya Klenteng Tek Hay Bio sepanjang tahun, memetakan siklus kalender Imlek (Lunar) ke kalender Masehi (Solar) secara astronomis presisi tanpa tanggal palsu.
+- **Sumber Data:** Koleksi `activities` dengan filter status `published`, diakses langsung secara efisien tanpa duplikasi koleksi.
+- **Dua Mode Tampilan Interaktif (`RitualCalendarView.tsx`):**
+  1. **Mode A — Daftar Agenda (Agenda List View):**
+     - Pengelompokan kronologis 12 bulan (Januari hingga Desember) untuk tahun target yang dipilih.
+     - Menampilkan kartu kegiatan lengkap dengan rentang tanggal Masehi, tanggal Imlek tradisi, lencana kategori warna terstandar, lencana status jadwal (*Jadwal Ditetapkan*, *Perkiraan / Menunggu Konfirmasi*, *Jadwal Diubah*), dewa terkait, lokasi, ringkasan makna acara, dan tombol menuju detail kegiatan.
+     - **Bagian Khusus Agenda Menunggu Jadwal Resmi:** Bagian berlatar amber di bawah kalender yang menampung kegiatan berulang dengan aturan periode khusus (misal: paruh bulan Imlek 1–15, Ulambana/Chit Gwe) atau kegiatan insidental. Sistem secara tegas tidak menghasilkan tanggal fiktif.
+  2. **Mode B — Kalender Bulanan (Monthly Calendar Grid View):**
+     - Kisi kalender 7 kolom standar (Minggu hingga Sabtu) dengan navigasi Bulan Sebelumnya/Berikutnya dan dropdown bulan.
+     - Setiap sel tanggal menampilkan angka tanggal Masehi, penanggalan Imlek tradisi (misal: 初一, 初二, Cap Go Meh), penanda hari ini (*Today*), serta indikator strip kegiatan (mendukung rentang multi-hari).
+     - **Panel Detail Harian Interaktif:** Mengklik sel tanggal membuka panel drawer detail kegiatan yang berlangsung pada tanggal tersebut.
+- **Fitur Pengunjung:**
+  - **Pemilih Tahun (*Year Switcher*):** Beralih antar tahun (2025, 2026, 2027) dengan resolusi astronomis instan berbasis `lunar-typescript`.
+  - **Penyaring Kategori (*Category Filter*):** Memfilter agenda (*Semua Kegiatan*, *Ritual Keagamaan*, *Sembahyang Leluhur*, *Hari Kebesaran Dewa*, *Perayaan Budaya*, *Kegiatan Sosial*).
+  - **Navigasi Dwibahasa:** Tersedia tautan langsung di Navbar dan Footer serta banner pengarah pada halaman daftar dan detail Kegiatan.
+
+### 3.10 Layanan
 - **URL / Rute Aktual:**
   - Versi ID: `/[locale]/layanan` (misal: `/id/layanan`)
   - Versi EN: `/[locale]/services` (misal: `/en/services`)
@@ -190,7 +219,7 @@ Website dirancang dengan arsitektur dwibahasa bawaan (*first-class international
   - Paginasi Layanan.
 - **Catatan Implementasi Khusus:** Pada sistem saat ini, **tidak ada rute detail terpisah** `/layanan/[slug]`. Seluruh detail deskripsi layanan telah dirancang untuk langsung dibaca di halaman utama Layanan (`/layanan` atau `/services`).
 
-### 3.10 Kontak dan Lokasi
+### 3.11 Kontak dan Lokasi
 - **URL / Rute Aktual:**
   - Versi ID: `/[locale]/kontak` (misal: `/id/kontak`)
   - Versi EN: `/[locale]/contact` (misal: `/en/contact`)
@@ -208,7 +237,7 @@ Website dirancang dengan arsitektur dwibahasa bawaan (*first-class international
     2. Menggunakan koordinat presisi Latitude dan Longitude jika kode embed kosong.
     3. Menggunakan fallback pencarian Google Maps statis untuk nama Klenteng Tek Hay Bio Semarang.
 
-### 3.11 Halaman Publik Lainnya
+### 3.12 Halaman Publik Lainnya
 1. **Root Redirect (`src/app/(frontend)/page.tsx`):** Rute root website (`/`) secara otomatis mengalihkan (*server-side redirect*) pengunjung ke bahasa default yaitu `/id`.
 2. **Halaman Tidak Ditemukan (`src/app/(frontend)/not-found.tsx`):** Menangani kesalahan 404 secara elegan dengan pesan kesalahan dwibahasa dan tombol navigasi kembali ke beranda.
 3. **Peta Situs (*Sitemap XML*) (`src/app/sitemap.ts`):** Rute `/sitemap.xml` yang secara otomatis mengindeks seluruh rute statis dan artikel dinamis untuk optimasi mesin pencari (SEO).
@@ -286,27 +315,31 @@ Website dirancang dengan arsitektur dwibahasa bawaan (*first-class international
   - **Update:** Mengubah nama atau deskripsi kategori (`PATCH /api/categories/[id]`).
   - **Delete:** Menghapus kategori melalui tombol Hapus di halaman edit (`DELETE /api/categories/[id]`).
 
-### 4.5 Pengelolaan Galeri dan Media
-- **URL / Rute Aktual:** `/admin/galeri`
+### 4.5 Pengelolaan Galeri Berbasis Album & Media
+- **URL / Rute Terkait:**
+  - **Manajemen Album Dokumentasi:** `/admin/galeri` (Tabel daftar album dengan sampul, tanggal, kategori, jumlah foto & video, status publikasi).
+  - **Tambah Album Baru:** `/admin/galeri/tambah` (Formulir pembuatan album dan upload media).
+  - **Edit Album & Kelola Media:** `/admin/galeri/[id]` (Penyuntingan album, pengurutan media, penambahan media baru, edit caption/alt text).
+  - **Pustaka Media Terpusat:** `/admin/galeri?tab=media` (Repositori berkas media lintas koleksi).
 - **Pengguna yang Memiliki Akses:** `super_admin` dan `editor`.
-- **Konsep Arsitektur Media Tersegregasi:** Berbeda dengan CMS konvensional yang mencampur seluruh gambar dalam satu folder, sistem ini membagi media ke dalam 6 koleksi independen guna mencegah kesalahan relasi:
-  1. `gallery-media` (Galeri Utama untuk website publik)
-  2. `news-media` (Gambar khusus artikel berita)
-  3. `activity-media` (Gambar khusus agenda kegiatan)
-  4. `service-media` (Gambar khusus fasilitas & layanan)
-  5. `history-media` (Gambar khusus arsip sejarah & linimasa)
-  6. `site-media` (Logo, ikon keunikan, dan aset website)
-- **Operasi yang Didukung:**
-  - **Upload Media:** Unggah berkas gambar langsung melalui form unggah (`POST /api/${collection}`).
-  - **Read / Filter Kategori Media:** Tab navigasi atas untuk berpindah antar-koleksi media (`?collection=...`).
-  - **Update Metadata:** Mengklik kartu gambar membuka modal detail untuk menyunting *Alt Text*, *Judul*, *Kategori Galeri* (*building*, *interior*, *activities*, *history*, *traditions*, *other*), dan *Deskripsi*. Disimpan melalui Server Action `updateMediaAction`.
-  - **Pencegahan Penghapusan Media yang Digunakan (*Critical Media Safety*):**
-    - Sebelum media dihapus, sistem memanggil endpoint khusus `/api/media-usage?collection=${collection}&id=${id}` (`getMediaUsage.ts`).
-    - Sistem memeriksa seluruh koleksi dan blok teks kaya (*Rich Text JSON*) di basis data.
-    - Jika media sedang digunakan oleh suatu artikel berita, kegiatan, layanan, sejarah, atau halaman beranda, sistem **mengunci tombol hapus** dan menampilkan daftar dokumen yang sedang menggunakan media tersebut.
-    - Pada level backend, Payload Hook `preventDeleteUsedMedia.ts` juga memblokir request penghapusan dengan melempar error 400 jika status `used === true`.
-  - **Delete Tunggal:** Gambar yang terbukti tidak digunakan (*unused*) dapat dihapus secara permanen.
-  - **Bulk Delete:** Memilih beberapa gambar sekaligus menggunakan *checkbox* dan menghapusnya secara massal setelah lolos verifikasi penggunaan media.
+- **Fitur & Operasi yang Didukung:**
+  1. **Model Album Berdiri Sendiri (*Standalone Albums*):**
+     - Judul dwibahasa (ID & EN), Slug otomatis dwibahasa, Kategori terstruktur (`ritual`, `ancestral-worship`, `deity-festival`, `cultural-celebration`, `social-activity`, `other`), Tanggal acara tunggal atau rentang tanggal, Gambar sampul (*Cover Image*), Deskripsi dwibahasa, dan Status (`draft` / `published`).
+  2. **Bulk Upload Gambar & Video Massal (`BulkMediaUploader.tsx`):**
+     - Mendukung *drag-and-drop* dan pemilihan banyak berkas sekaligus (*multi-file picker*).
+     - Pratinjau lokal (*client-side preview*) instan untuk gambar dan lencana indikator video.
+     - Validasi whitelist MIME type (`image/jpeg`, `image/png`, `image/webp`, `video/mp4`, `video/webm`, `video/quicktime`) serta batas ukuran berkas (maksimal 10MB per foto, 100MB per video).
+     - Pengunggahan asinkron mandiri per-berkas dengan bilah progres (*progress bar*), status penanganan error terisolasi (kegagalan satu berkas tidak membatalkan berkas lainnya), dan tombol *Coba Lagi* (*Retry*).
+  3. **Pengaturan Urutan Media (*Media Reordering*):**
+     - Setiap item media di dalam album memiliki nomor urut dan tombol navigasi naik/turun (*Move Up / Move Down*).
+     - Admin dapat menyusun urutan tampilan foto dan video sesuai kronologi perayaan.
+  4. **Penyuntingan Metadata Media Per-Item:**
+     - Modal edit metadata untuk melengkapi Judul Media, *Caption* / Deskripsi khusus untuk album tersebut, dan *Alt Text* aksesibilitas untuk gambar.
+     - Admin tidak dipaksa mengisi metadata di awal; pengisian dapat dicicil kapan saja.
+  5. **Mekanisme Penghapusan Aman (*Safe Deletion & Disassociation*):**
+     - **Keluarkan dari Album:** Menghapus relasi media dari album tanpa menghapus berkas fisik di repositori `gallery-media`.
+     - **Hapus Permanen Berkas:** Memeriksa `/api/media-usage` terlebih dahulu. Jika berkas digunakan di album atau konten lain, penghapusan dicegah.
+     - **Hapus Album:** Menghapus dokumen album tidak menghapus foto dan video fisiknya di basis data.
 
 ### 4.6 Pengelolaan Kegiatan
 - **URL / Rute Terkait:**
@@ -418,12 +451,14 @@ Website dirancang dengan arsitektur dwibahasa bawaan (*first-class international
 | 6 | **Detail Berita** | `/[locale]/berita/[slug]` (ID)<br>`/[locale]/news/[slug]` (EN) | Membaca artikel berita secara mendalam | Koleksi: `posts` (by slug & locale) |
 | 7 | **Daftar Kegiatan** | `/[locale]/kegiatan` (ID)<br>`/[locale]/activities` (EN) | Jadwal agenda ibadah dan kebudayaan | Koleksi: `activities` (filter `published`) |
 | 8 | **Detail Kegiatan** | `/[locale]/kegiatan/[slug]` (ID)<br>`/[locale]/activities/[slug]` (EN) | Rincian panduan dan pelaksanaan kegiatan | Koleksi: `activities` (by slug & locale) |
-| 9 | **Layanan & Fasilitas**| `/[locale]/layanan` (ID)<br>`/[locale]/services` (EN) | Informasi layanan keagamaan dan fasilitas | Koleksi: `services` (filter `published`) |
-| 10 | **Galeri Foto** | `/[locale]/galeri` (ID)<br>`/[locale]/gallery` (EN) | Repositori dokumentasi foto visual | Koleksi: `gallery-media` |
-| 11 | **Kontak & Lokasi** | `/[locale]/kontak` (ID)<br>`/[locale]/contact` (EN) | Informasi kontak, jam buka, dan peta lokasi | Global: `contact-information` |
-| 12 | **Halaman 404** | `/not-found` | Menangani rute yang tidak valid | Komponen internal `not-found.tsx` |
-| 13 | **Sitemap XML** | `/sitemap.xml` | Indeks perayapan mesin pencari | `sitemap.ts` |
-| 14 | **Robots TXT** | `/robots.txt` | Aturan perayapan mesin pencari | `robots.ts` |
+| 9 | **Kalender Ritual & Perayaan** | `/[locale]/kalender-ritual` (ID)<br>`/[locale]/ritual-calendar` (EN) | Kalender bulanan interaktif & agenda tahunan berbasis Imlek & Masehi | Koleksi: `activities` (filter `published`) |
+| 10 | **Layanan & Fasilitas**| `/[locale]/layanan` (ID)<br>`/[locale]/services` (EN) | Informasi layanan keagamaan dan fasilitas | Koleksi: `services` (filter `published`) |
+| 11 | **Daftar Album Galeri** | `/[locale]/galeri` (ID)<br>`/[locale]/gallery` (EN) | Repositori album dokumentasi foto & video berdasar kategori | Koleksi: `albums` (filter `published`) |
+| 12 | **Detail Album Galeri** | `/[locale]/galeri/[slug]` (ID)<br>`/[locale]/gallery/[slug]` (EN) | Kumpulan foto & video per acara dengan filter, video player, & lightbox | Koleksi: `albums`, `gallery-media` |
+| 13 | **Kontak & Lokasi** | `/[locale]/kontak` (ID)<br>`/[locale]/contact` (EN) | Informasi kontak, jam buka, dan peta lokasi | Global: `contact-information` |
+| 14 | **Halaman 404** | `/not-found` | Menangani rute yang tidak valid | Komponen internal `not-found.tsx` |
+| 15 | **Sitemap XML** | `/sitemap.xml` | Indeks perayapan mesin pencari | `sitemap.ts` |
+| 16 | **Robots TXT** | `/robots.txt` | Aturan perayapan mesin pencari | `robots.ts` |
 
 ### 5.2 Daftar Halaman Admin
 
@@ -443,13 +478,16 @@ Website dirancang dengan arsitektur dwibahasa bawaan (*first-class international
 | 12 | **Daftar Layanan** | `/admin/layanan` | `super_admin`, `editor` | Read, Delete, Bulk Delete, Paginasi |
 | 13 | **Tambah Layanan** | `/admin/layanan/tambah` | `super_admin`, `editor` | Create, Upload Gambar, Draft/Publish |
 | 14 | **Edit Layanan** | `/admin/layanan/[id]` | `super_admin`, `editor` | Read, Update, Delete, Draft/Publish |
-| 15 | **Pusat Media & Galeri**| `/admin/galeri` | `super_admin`, `editor` | Read, Upload, Update Meta, Cek Usage, Delete, Bulk Delete |
-| 16 | **Pengaturan Sejarah** | `/admin/sejarah` | `super_admin`, `editor` | Read, Update (Narasi & Linimasa Dinamis) |
-| 17 | **Pengaturan Beranda** | `/admin/halaman-beranda`| `super_admin` | Read, Update (Hero, Keunikan, CTA) |
-| 18 | **Informasi Website** | `/admin/informasi-website`| `super_admin` | Read, Update (Alamat, Kontak, Peta, Medsos) |
-| 19 | **Manajemen Pengguna** | `/admin/pengguna` | `super_admin` | Read (Tabel Akun), Tautan ke Payload Create |
-| 20 | **Pengaturan Lanjutan** | `/admin/pengaturan` | `super_admin` | Read, Tautan ke Payload Native Admin |
-| 21 | **Payload Native Admin** | `/admin-payload` | Sesuai aturan Payload CMS | Akses penuh manajemen basis data & skema |
+| 15 | **Manajemen Album Galeri**| `/admin/galeri` | `super_admin`, `editor` | Read (Daftar Album), Delete, Bulk Delete, Paginasi, Tab Switcher |
+| 16 | **Tambah Album Galeri**| `/admin/galeri/tambah` | `super_admin`, `editor` | Create Album, Bulk Upload Foto & Video, Reordering, Draft/Publish |
+| 17 | **Edit Album Galeri** | `/admin/galeri/[id]` | `super_admin`, `editor` | Read, Update Album, Bulk Upload, Reordering, Disassociate, Edit Caption/Alt |
+| 18 | **Repositori Media Galeri**| `/admin/galeri?tab=media`| `super_admin`, `editor` | Read Media Library, Upload, Update Meta, Cek Usage, Safe Delete |
+| 19 | **Pengaturan Sejarah** | `/admin/sejarah` | `super_admin`, `editor` | Read, Update (Narasi & Linimasa Dinamis) |
+| 20 | **Pengaturan Beranda** | `/admin/halaman-beranda`| `super_admin` | Read, Update (Hero, Keunikan, CTA) |
+| 21 | **Informasi Website** | `/admin/informasi-website`| `super_admin` | Read, Update (Alamat, Kontak, Peta, Medsos) |
+| 22 | **Manajemen Pengguna** | `/admin/pengguna` | `super_admin` | Read (Tabel Akun), Tautan ke Payload Create |
+| 23 | **Pengaturan Lanjutan** | `/admin/pengaturan` | `super_admin` | Read, Tautan ke Payload Native Admin |
+| 24 | **Payload Native Admin** | `/admin-payload` | Sesuai aturan Payload CMS | Akses penuh manajemen basis data & skema |
 
 ### 5.3 Ringkasan Route
 Aplikasi Next.js menggunakan struktur rute terorganisir (*Route Groups*):
@@ -469,10 +507,12 @@ Aplikasi Next.js menggunakan struktur rute terorganisir (*Route Groups*):
 |    +---> [Layanan] <---------------------------- (Collection: Services)         |
 |    |                                                                            |
 |    +---> [Kegiatan] ---> [Detail Kegiatan] <---- (Collection: Activities)       |
+|    |       |                                                                    |
+|    |       +-----------> [Kalender Ritual] <---- (Perhitungan Astronomis Imlek) |
 |    |                                                                            |
 |    +---> [Berita]   ---> [Detail Berita] <------ (Collection: Posts)            |
 |    |                                                                            |
-|    +---> [Galeri] <----------------------------- (Collection: GalleryMedia)     |
+|    +---> [Galeri]   ---> [Detail Album] <------- (Collections: Albums, Media)   |
 |    |                                                                            |
 |    +---> [Kontak & Peta] <---------------------- (Global: ContactInformation)   |
 +---------------------------------------------------------------------------------+
@@ -515,36 +555,71 @@ Aplikasi Next.js menggunakan struktur rute terorganisir (*Route Groups*):
 6. **Penyimpanan:** Admin menekan tombol **Simpan**. Server Action `saveNewsAction` memvalidasi sesi pengguna, mengekstrak data sesuai lokal masing-masing, menyimpan dokumen ke koleksi `posts`, dan mengeksekusi `revalidatePath` untuk `/id/berita`, `/en/news`, serta slug terkait.
 7. **Verifikasi Publik:** Pengunjung membuka `/id/berita` atau `/en/news`; artikel yang baru saja diterbitkan langsung muncul pada urutan teratas.
 
-### 6.2 Alur Pengelolaan Galeri & Media
-1. **Membuka Pusat Media:** Admin membuka menu **Galeri** (`/admin/galeri`).
-2. **Memilih Kategori Media:** Admin memilih tab kategori media di bagian atas (misal: *Galeri Utama*, *Media Berita*, dll.).
-3. **Mengunggah Media:** Admin memilih berkas foto dari komputer melalui input berkas. Sistem mengunggah foto ke API koleksi bersangkutan dan langsung memuat ulang galeri.
-4. **Menyunting Metadata Foto:**
-   - Admin mengklik kartu foto pada grid.
-   - Muncul modal *Detail Media* yang menampilkan pratinjau gambar, input *Alt Text*, *Judul*, *Kategori Galeri*, dan *Deskripsi*.
-   - Admin menyunting informasi dan menekan **Simpan**.
-5. **Mekanisme Penghapusan Aman (*Safe Delete*):**
-   - Di dalam modal detail atau saat memilih gambar untuk dihapus massal, sistem secara otomatis mengecek status penggunaan via `/api/media-usage`.
-   - Jika gambar sedang dipakai oleh artikel berita atau halaman lain, sistem menampilkan pesan: *"Tidak dapat dihapus: Sedang digunakan oleh X dokumen"* dan menyembunyikan tombol hapus.
-   - Jika gambar tidak digunakan, tombol **Hapus Media** aktif dan dapat ditekan setelah konfirmasi.
+### 6.2 Alur Pengelolaan Galeri Berbasis Album & Bulk Upload
+1. **Navigasi ke Menu Galeri:** Admin membuka menu **Galeri** (`/admin/galeri`). Halaman menampilkan daftar seluruh Album Dokumentasi dengan gambar sampul, kategori, rentang tanggal acara, total media (foto dan video), serta status publikasi.
+2. **Membuat Album Baru:**
+   - Admin mengklik tombol **+ Tambah Album** (`/admin/galeri/tambah`).
+   - Mengisi informasi utama dwibahasa (ID & EN): Judul Album, Slug URL (otomatis terisi), Kategori Acara (*Ritual*, *Sembahyang Leluhur*, *Hari Kebesaran Dewa*, *Perayaan Budaya*, *Kegiatan Sosial*, atau *Dokumentasi Lainnya*), dan Deskripsi singkat dokumentasi.
+   - Menentukan waktu acara: Tanggal Acara tunggal atau Rentang Tanggal jika perayaan berlangsung beberapa hari.
+   - Memilih **Gambar Sampul (*Cover Image*)** melalui tombol unggah sampul.
+3. **Mengunggah Foto & Video Secara Massal (*Bulk Upload*):**
+   - Di bagian formulir **Dokumentasi Media (Foto & Video)**, admin dapat menarik (*drag & drop*) banyak berkas sekaligus atau mengklik area dropzone untuk memilih multi-file dari penyimpanan komputer.
+   - Sistem menampilkan pratinjau lokal (*client-side preview*) seketika: foto muncul dalam bentuk gambar thumbnail dan video ditandai dengan badge khusus "VIDEO" serta nama berkas.
+   - Admin menekan tombol **Mulai Unggah Semua Berkas**.
+   - Sistem memvalidasi ekstensi dan ukuran berkas secara otomatis, lalu mengunggah berkas secara mandiri dengan bilah progres persentase (*progress bar*). Jika satu berkas mengalami kegagalan koneksi, berkas lain tetap berhasil dan berkas yang gagal dapat diulang dengan tombol **Coba Lagi**.
+4. **Mengatur Urutan Tampilan Media (*Reordering*):**
+   - Media yang telah terunggah langsung masuk ke daftar media album.
+   - Admin dapat menata kronologi perayaan dengan menekan tombol **Naik (*Move Up*)** atau **Turun (*Move Down*)** pada kartu media bersangkutan.
+5. **Melengkapi Metadata Media (Bertahap):**
+   - Admin mengklik ikon pensil (*Edit*) pada salah satu kartu media.
+   - Terbuka jendela modal metadata untuk menyunting: Judul Berkas, Keterangan (*Caption*) khusus untuk album tersebut, dan *Alt Text* aksesibilitas (untuk foto).
+   - Pengisian metadata bersifat opsional saat upload awal dan dapat dilengkapi sewaktu-waktu.
+6. **Menghapus atau Mengeluarkan Media dari Album:**
+   - Tombol **Keluarkan dari Album (Trash)** hanya memutus relasi berkas dari album saat ini. Berkas fisik tetap tersimpan aman di pustaka media (`gallery-media`) dan tidak terhapus.
+7. **Menyimpan & Publikasi Album:**
+   - Admin memilih status: **Draft** (hanya tersimpan di admin) atau **Publik (Published)** (siap tayang).
+   - Menekan tombol **Simpan Album**. Server Action `saveAlbumAction` memvalidasi data dan mengeksekusi revalidasi cache publik (`/id/galeri`, `/en/gallery`, dan detail album).
+8. **Pustaka Media Terpusat & Proteksi File:**
+   - Melalui tab **Pustaka Media** (`/admin/galeri?tab=media`), admin dapat melihat seluruh aset media.
+   - Jika admin berniat menghapus permanen suatu berkas foto/video dari repositori, sistem memverifikasi relasi berkas melalui `getMediaUsage`. Apabila berkas sedang menjadi cover atau item dari album aktif, tombol hapus dikunci demi keamanan integritas data klenteng.
 
 ### 6.3 Alur Pengelolaan Kegiatan
-1. **Navigasi:** Admin membuka menu **Kegiatan** (`/admin/kegiatan`).
+1. **Navigasi:** Admin membuka menu **Kegiatan** (`/admin/kegiatan`). Tabel daftar menampilkan Judul, Kategori terstruktur, Jadwal (Masehi & Imlek), Status Jadwal, dan Status Publikasi.
 2. **Input Agenda:** Memilih **Tambah Kegiatan** (`/admin/kegiatan/tambah`).
-3. **Pengisian Formulir:**
-   - Mengisi Judul Kegiatan, Lokasi, Deskripsi Singkat, dan Konten Rinci pada tab ID dan EN.
-   - Menentukan Waktu Pelaksanaan Kegiatan melalui input kalender/jam.
-   - Memilih gambar poster/kegiatan dari `activity-media` via `MediaPicker`.
-   - Menetapkan status `draft` atau `published`.
-4. **Penyimpanan & Publikasi:** Menekan tombol **Simpan**. Data diperbarui dan langsung tampil di halaman `/id/kegiatan` atau `/en/activities`. Pengunjung dapat mengklik kegiatan untuk melihat laman detail `/kegiatan/[slug]`.
+3. **Pengisian Formulir (5 Bagian Terstruktur):**
+   - **Informasi Dasar:** Judul Kegiatan, Slug URL otomatis, Ringkasan Singkat, dan Konten Lengkap dwibahasa (ID & EN).
+   - **Jadwal & Kalender:** 
+     - **Pola Pengulangan:** Tahunan Imlek (`annual-lunar`), Tahunan Masehi (`annual-gregorian`), Periode Tertentu (`periodic`), Satu Kali (`one-time`), atau Insidental (`incidental`).
+     - **Kalender Imlek:** Tanggal Imlek (1–30), Bulan Imlek (1–12), Bulan Kabisat (*Runyue*), Aturan Imlek (Tanggal Tetap, Paruh Pertama Bulan 1–15, Paruh Kedua Bulan 16–30, Periode Khusus), dan deskripsi periode.
+     - **Kalender Masehi:** Tanggal & waktu mulai dan tanggal & waktu selesai untuk kegiatan multi-hari.
+     - **Status Jadwal:** Jadwal Ditetapkan (`scheduled`), Perkiraan/Menunggu Konfirmasi (`tentative`), Jadwal Diubah (`rescheduled`), atau Belum Ditentukan (`unscheduled`). Dilengkapi catatan jadwal dan catatan perubahan (*reschedule note*).
+   - **Lokasi Pelaksanaan:** Pilihan cakupan lokasi (Internal Klenteng Tek Hay Bio, Eksternal, atau Gabungan), nama tempat, alamat lengkap, dan catatan hubungan lokasi.
+   - **Makna, Tradisi & Rangkaian Acara:** Dewa/Tokoh terkait (misal: Tek Hay Cin Jin), peran dewa, makna/tujuan spiritual ritual, penjelasan tradisi leluhur, rangkaian kegiatan/susunan acara, dan catatan resmi pengurus.
+   - **Partisipasi Umat (Opsional):** Penjelasan partisipasi, informasi donasi lilin/pelita sembahyang terbuka untuk umum, donasi lampion berkah, perlengkapan sembahyang yang diperlukan, instruksi/tata tertib, dan kontak narahubung.
+   - **Status & Media:** Kategori kegiatan terstruktur, poster/foto utama via `MediaPicker` (`activity-media`), dan status publikasi (`draft` atau `published`).
+4. **Penyimpanan & Publikasi:** Menekan tombol **Simpan**. Sistem melakukan validasi menyeluruh (judul wajib, validasi tanggal selesai tidak boleh mendahului tanggal mulai, rentang Imlek valid, dan verifikasi hak akses). Data otomatis diperbarui dan langsung tampil pada daftar dwibahasa (`/id/kegiatan`, `/en/activities`) serta halaman detail (`/kegiatan/[slug]`, `/activities/[slug]`). Pengunjung dapat memfilter kegiatan berdasarkan kategori terstruktur.
 
-### 6.4 Alur Pengelolaan Layanan
+### 6.4 Alur Penjelajahan Kalender Ritual dan Perayaan (Publik & Algoritma Astronomis Imlek)
+1. **Akses Pengunjung:** Pengunjung membuka menu **Kalender Ritual** pada navigasi utama (`/id/kalender-ritual` atau `/en/ritual-calendar`) atau mengklik banner pengarah pada halaman Kegiatan maupun detail kegiatan.
+2. **Pemilihan Mode Tampilan:**
+   - **Mode Daftar Agenda:** Menyajikan daftar kegiatan tersusun rapi berdasarkan 12 bulan Masehi (Januari–Desember). Setiap kegiatan memuat tanggal Masehi, tanggal tradisi Imlek, dewa terkait, lencana status jadwal, dan deskripsi singkat.
+   - **Mode Kalender Bulanan:** Menyajikan kisi kalender visual interaktif dengan indikator tanggal tradisi Imlek (初一, 初二, dst.) pada setiap sel hari. Mengklik tanggal tertentu memicu panel detail harian yang menampilkan seluruh kegiatan pada tanggal tersebut.
+3. **Logika Resolusi Penanggalan Astronomis:**
+   - **Prioritas Tanggal Resmi Pengurus:** Jika pengurus telah menetapkan tanggal Masehi resmi pada dokumen kegiatan untuk tahun target, sistem memprioritaskan tanggal tersebut dengan status *Jadwal Ditetapkan*.
+   - **Konversi Otomatis Imlek ke Masehi:** Untuk kegiatan tahunan Imlek (`annual-lunar`) yang belum memiliki tanggal Masehi definitif pada tahun berjalan, sistem mengonversi tanggal Imlek menjadi tanggal Masehi menggunakan perhitungan astronomis presisi (`lunar-typescript`). Tanggal ini diberi lencana penanda *Perkiraan Tanggal Masehi (Konversi Imlek)*.
+   - **Penanganan Multi-Hari:** Kegiatan yang memiliki durasi multi-hari secara otomatis memproyeksikan rentang tanggal mulai dan selesai secara proporsional.
+   - **Pemisahan Agenda Belum Memiliki Tanggal Pasti (Bebas Tanggal Palsu):** Kegiatan yang mengikuti aturan periode tertentu (misal: paruh bulan Imlek 1–15, Ulambana/Chit Gwe) atau kegiatan insidental ditempatkan pada seksi khusus di bawah kalender bertajuk *Agenda Menunggu Keputusan Pengurus*. Sistem secara tegas tidak menyisipkan tanggal fiktif.
+4. **Penyaringan Kategori & Navigasi Tahun:**
+   - Pengunjung dapat mengganti tahun pelaksanaan (misal: 2025, 2026, 2027) untuk melihat perkiraan hari ibadah di masa mendatang.
+   - Pengunjung dapat memfilter kegiatan berdasarkan kategori (*Ritual Keagamaan*, *Sembahyang Leluhur*, *Hari Kebesaran Dewa*, *Perayaan Budaya*, *Kegiatan Sosial*).
+
+### 6.5 Alur Pengelolaan Layanan
 1. **Navigasi:** Admin membuka menu **Layanan** (`/admin/layanan`).
 2. **Penyusunan Fasilitas/Layanan:** Admin memilih **Tambah Layanan** atau mengedit layanan yang sudah ada.
 3. **Pengaturan Urutan Tampil:** Selain mengisi judul dan deskripsi dwibahasa, admin mengisi angka **Urutan Tampil (*Sort Order*)**. Angka yang lebih kecil (misal: 1, 2, 3) akan ditampilkan lebih awal pada halaman publik.
 4. **Penyimpanan:** Data disimpan melalui `saveServiceAction`. Konten berstatus `published` langsung tampil di `/id/layanan` dan `/en/services`.
 
-### 6.5 Alur Pengelolaan Sejarah & Timeline
+### 6.6 Alur Pengelolaan Sejarah & Timeline
 1. **Navigasi:** Admin membuka menu **Sejarah** (`/admin/sejarah`).
 2. **Penyuntingan Narasi:** Admin memperbarui judul halaman, ringkasan pengantar sejarah beranda, dan uraian narasi lengkap sejarah klenteng pada tab ID dan EN.
 3. **Pengelolaan Linimasa (*Timeline*):**
@@ -553,7 +628,7 @@ Aplikasi Next.js menggunakan struktur rute terorganisir (*Route Groups*):
    - Menghapus momen lama yang tidak relevan dengan menekan tombol **Hapus** pada baris yang bersangkutan.
 4. **Penyimpanan:** Menekan **Simpan Perubahan**. Halaman publik `/id/sejarah` dan `/id/tentang-kami` seketika diperbarui secara otomatis.
 
-### 6.6 Alur Pengelolaan Informasi Website & Beranda
+### 6.7 Alur Pengelolaan Informasi Website & Beranda
 1. **Akses Super Admin:** Super Admin membuka menu **Informasi Website** (`/admin/informasi-website`) atau **Halaman Beranda** (`/admin/halaman-beranda`).
 2. **Penyuntingan Parameter:**
    - Pada Informasi Website: Admin memperbarui nama website, tagline, nomor WhatsApp, email, jam kunjungan, dan kode embed Google Maps atau koordinat.

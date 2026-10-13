@@ -5,6 +5,8 @@
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { updateMediaAction } from "@/app/(admin)/admin/galeri/actions";
+import { isMediaVideo } from "@/lib/gallery/utils";
+import { Video as VideoIcon } from "lucide-react";
 
 export function GalleryUploader({ initialMedia, collection = "gallery-media" }: { initialMedia: any[], collection?: string }) {
   const router = useRouter();
@@ -164,7 +166,7 @@ export function GalleryUploader({ initialMedia, collection = "gallery-media" }: 
           </label>
           <input
             type="file"
-            accept="image/*"
+            accept="image/*,video/*"
             ref={fileInputRef}
             onChange={handleUpload}
             disabled={isUploading}
@@ -182,7 +184,7 @@ export function GalleryUploader({ initialMedia, collection = "gallery-media" }: 
 
         {selectedMedia.size > 0 && (
           <div className="flex items-center gap-4 bg-red-50 p-3 rounded-lg border border-red-100">
-            <span className="text-sm font-medium text-red-700">{selectedMedia.size} gambar dipilih</span>
+            <span className="text-sm font-medium text-red-700">{selectedMedia.size} media dipilih</span>
             <button
               onClick={handleBulkDelete}
               disabled={isDeleting}
@@ -198,13 +200,23 @@ export function GalleryUploader({ initialMedia, collection = "gallery-media" }: 
       {editingMedia && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50">
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full flex flex-col md:flex-row overflow-hidden max-h-[90vh]">
-            <div className="md:w-1/2 bg-slate-100 p-4 flex flex-col items-center justify-center relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={editingMedia.url}
-                alt={editingMedia.alt}
-                className="max-w-full max-h-[40vh] md:max-h-full object-contain"
-              />
+            <div className="md:w-1/2 bg-slate-900 p-4 flex flex-col items-center justify-center relative">
+              {isMediaVideo(editingMedia) ? (
+                <video
+                  src={editingMedia.url}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="max-w-full max-h-[40vh] md:max-h-full rounded-lg"
+                />
+              ) : (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={editingMedia.url}
+                  alt={editingMedia.alt}
+                  className="max-w-full max-h-[40vh] md:max-h-full object-contain"
+                />
+              )}
             </div>
             <div className="md:w-1/2 p-6 overflow-y-auto">
               <h3 className="font-bold text-lg mb-4">Detail Media</h3>
@@ -349,24 +361,58 @@ export function GalleryUploader({ initialMedia, collection = "gallery-media" }: 
                 />
               </div>
 
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={media.url as string}
-                alt={(media.alt as string) || "Media"}
-                className={`w-full h-full object-cover transition-transform cursor-pointer ${isSelected ? 'scale-95' : ''}`}
-                onClick={() => {
-                  if (selectedMedia.size > 0) {
-                    toggleSelect(media.id);
-                  } else {
-                    setEditingMedia(media); 
-                    setUsageStatus(null); 
-                    fetch(`/api/media-usage?collection=${collection}&id=${media.id}`)
-                      .then(r => r.json())
-                      .then(setUsageStatus)
-                      .catch(console.error);
-                  }
-                }}
-              />
+              {isMediaVideo(media) ? (
+                <div
+                  className={`w-full h-full bg-slate-900 relative cursor-pointer overflow-hidden flex items-center justify-center ${isSelected ? 'scale-95' : ''}`}
+                  onClick={() => {
+                    if (selectedMedia.size > 0) {
+                      toggleSelect(media.id);
+                    } else {
+                      setEditingMedia(media); 
+                      setUsageStatus(null); 
+                      fetch(`/api/media-usage?collection=${collection}&id=${media.id}`)
+                        .then(r => r.json())
+                        .then(setUsageStatus)
+                        .catch(console.error);
+                    }
+                  }}
+                >
+                  <video
+                    src={media.url}
+                    preload="metadata"
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover opacity-60"
+                  />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <div className="w-9 h-9 rounded-full bg-black/70 text-amber-400 flex items-center justify-center shadow-lg border border-white/20">
+                      <VideoIcon className="w-4 h-4 ml-0.5" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 mt-1 drop-shadow">
+                      Video
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={media.url as string}
+                  alt={(media.alt as string) || "Media"}
+                  className={`w-full h-full object-cover transition-transform cursor-pointer ${isSelected ? 'scale-95' : ''}`}
+                  onClick={() => {
+                    if (selectedMedia.size > 0) {
+                      toggleSelect(media.id);
+                    } else {
+                      setEditingMedia(media); 
+                      setUsageStatus(null); 
+                      fetch(`/api/media-usage?collection=${collection}&id=${media.id}`)
+                        .then(r => r.json())
+                        .then(setUsageStatus)
+                        .catch(console.error);
+                    }
+                  }}
+                />
+              )}
               <div className={`absolute inset-0 pointer-events-none bg-slate-900/50 flex flex-col items-center justify-center p-4 gap-2 transition-opacity ${selectedMedia.size > 0 ? 'hidden' : 'opacity-0 group-hover:opacity-100'}`}>
                 <button
                   type="button"

@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "tsx --test tests/unit/activities.test.mjs tests/unit/albums.test.mjs tests/unit/calendar.test.mjs"
   },
   "dependencies": {
     "@lexical/code": "^0.50.0",
@@ -26,6 +27,7 @@
     "graphql": "^16.14.2",
     "lexical": "^0.50.0",
     "lucide-react": "^1.48.0",
+    "lunar-typescript": "^1.8.6",
     "next": "^16.3.6",
     "payload": "^3.90.2",
     "react": "^19.3.0",

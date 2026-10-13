@@ -17,6 +17,7 @@ export function Navbar({ locale }: { locale: 'id' | 'en' }) {
     { id: '/id/sejarah', en: '/en/history', labelId: 'Sejarah', labelEn: 'History' },
     { id: '/id/layanan', en: '/en/services', labelId: 'Layanan', labelEn: 'Services' },
     { id: '/id/kegiatan', en: '/en/activities', labelId: 'Kegiatan', labelEn: 'Activities' },
+    { id: '/id/kalender-ritual', en: '/en/ritual-calendar', labelId: 'Kalender Ritual', labelEn: 'Calendar' },
     { id: '/id/berita', en: '/en/news', labelId: 'Berita', labelEn: 'News' },
     { id: '/id/galeri', en: '/en/gallery', labelId: 'Galeri', labelEn: 'Gallery' },
     { id: '/id/kontak', en: '/en/contact', labelId: 'Kontak', labelEn: 'Contact' },

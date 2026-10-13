@@ -23,6 +23,8 @@ interface MediaImageProps {
   priority?: boolean;
 }
 
+import { isMediaVideo } from "@/lib/gallery/utils";
+
 export function MediaImage({
   media,
   alt,
@@ -53,7 +55,35 @@ export function MediaImage({
     );
   }
 
-  const imageUrl = media.url;
+  const isVideo = isMediaVideo(media);
+  const videoThumbnailUrl = (media as any).videoThumbnail?.url;
+
+  // If it's a video without a thumbnail image, render an HTML5 video preview instead of crashing Next.js Image
+  if (isVideo && !videoThumbnailUrl) {
+    return (
+      <div
+        className={`${fill ? "absolute inset-0" : "relative w-full h-auto"} bg-stone-900 overflow-hidden ${className}`}
+        style={!fill && width ? { maxWidth: width } : undefined}
+      >
+        <video
+          src={media.url}
+          preload="metadata"
+          muted
+          playsInline
+          className={fill ? "w-full h-full object-cover" : "w-full h-auto object-cover"}
+        />
+        <div className="absolute inset-0 bg-black/30 flex items-center justify-center pointer-events-none">
+          <div className="w-10 h-10 rounded-full bg-black/60 text-white flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-lg">
+            <svg className="w-5 h-5 text-amber-400 fill-amber-400 ml-0.5" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const imageUrl = videoThumbnailUrl || media.url;
   const imageAlt = alt || media.alt || "Tek Hay Bio Image";
 
   return (
