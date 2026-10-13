@@ -3,15 +3,21 @@ import Link from 'next/link'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { Plus } from 'lucide-react'
+import { AdminPagination } from '@/components/admin/AdminPagination'
 
 export const dynamic = 'force-dynamic'
 
-export default async function CategoriesPage() {
+export default async function CategoriesPage({ searchParams }: { searchParams: Promise<{ page?: string, limit?: string }> }) {
+  const { page, limit } = await searchParams
+  const currentPage = parseInt(page || '1', 10)
+  const currentLimit = parseInt(limit || '10', 10)
+
   const payload = await getPayload({ config: configPromise })
   const data = await payload.find({
     collection: 'categories',
     depth: 0,
-    limit: 100,
+    limit: currentLimit,
+    page: currentPage,
     sort: '-createdAt'
   })
 
@@ -72,6 +78,17 @@ export default async function CategoriesPage() {
             </tbody>
           </table>
         </div>
+        
+        <AdminPagination
+          page={data.page as number}
+          totalPages={data.totalPages}
+          hasPrevPage={data.hasPrevPage}
+          hasNextPage={data.hasNextPage}
+          prevPage={data.prevPage}
+          nextPage={data.nextPage}
+          baseUrl="/admin/kategori-berita"
+          limit={currentLimit}
+        />
       </div>
     </div>
   )

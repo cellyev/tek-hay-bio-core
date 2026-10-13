@@ -1,13 +1,17 @@
-﻿import React from "react";
+import React from "react";
 import { getCollection } from "./queries";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Container, Section } from "@/components/ui/Layout";
 import { MediaImage } from "@/components/ui/MediaImage";
 
-export async function GalleryPage({ locale }: { locale: "id" | "en" }) {
+import { Pagination } from "@/components/ui/Pagination";
+
+export async function GalleryPage({ locale, page = 1, limit = 12 }: { locale: "id" | "en", page?: number, limit?: number }) {
   // Fetch all media
-  const mediaList = await getCollection("gallery-media", locale, {
+  const { docs: mediaList, totalPages, page: currentPage } = await getCollection("gallery-media", locale, {
     sort: "-updatedAt",
+    page,
+    limit,
   });
 
   return (
@@ -29,33 +33,41 @@ export async function GalleryPage({ locale }: { locale: "id" | "en" }) {
                 : "No photos in the gallery yet."}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {mediaList.map((media) => (
-                <div
-                  key={media.id as string}
-                  className="group relative aspect-square bg-stone-200 rounded-lg overflow-hidden border border-stone-200 shadow-sm"
-                >
-                  <MediaImage
-                    media={media}
-                    fill
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                    <span className="text-white font-medium text-sm drop-shadow-md line-clamp-2">
-                      {(media.title as string) ||
-                        (media.alt as string) ||
-                        "Tek Hay Bio"}
-                    </span>
-                    {Boolean(media.category) && (
-                      <span className="text-stone-300 text-xs mt-1 uppercase tracking-wider">
-                        {media.category as string}
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {mediaList.map((media) => (
+                  <div
+                    key={media.id as string}
+                    className="group relative aspect-square bg-stone-200 rounded-lg overflow-hidden border border-stone-200 shadow-sm"
+                  >
+                    <MediaImage
+                      media={media}
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                      <span className="text-white font-medium text-sm drop-shadow-md line-clamp-2">
+                        {(media.title as string) ||
+                          (media.alt as string) ||
+                          "Tek Hay Bio"}
                       </span>
-                    )}
+                      {Boolean(media.category) && (
+                        <span className="text-stone-300 text-xs mt-1 uppercase tracking-wider">
+                          {media.category as string}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+              <Pagination 
+                totalPages={totalPages} 
+                currentPage={currentPage} 
+                baseUrl={`/${locale}/${locale === 'id' ? 'galeri' : 'gallery'}`} 
+                limit={limit} 
+              />
+            </>
           )}
         </Container>
       </Section>

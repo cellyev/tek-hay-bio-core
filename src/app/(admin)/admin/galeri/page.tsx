@@ -8,6 +8,8 @@ import { redirect } from 'next/navigation'
 import { GalleryUploader } from '@/components/admin/GalleryUploader'
 import Link from 'next/link'
 
+import { AdminPagination } from '@/components/admin/AdminPagination'
+
 export const dynamic = 'force-dynamic'
 
 const collections = [
@@ -19,9 +21,11 @@ const collections = [
   { id: 'site-media', label: 'Media Website' },
 ]
 
-export default async function GalleryAdminPage({ searchParams }: { searchParams: Promise<{ collection?: string }> }) {
+export default async function GalleryAdminPage({ searchParams }: { searchParams: Promise<{ collection?: string, page?: string, limit?: string }> }) {
   const params = await searchParams;
   const activeCollection = params.collection || 'gallery-media';
+  const page = parseInt(params.page || '1', 10);
+  const limit = parseInt(params.limit || '100', 10);
   
   const payload = await getPayload({ config: configPromise })
   const { user } = await payload.auth({ headers: await headers() })
@@ -30,7 +34,8 @@ export default async function GalleryAdminPage({ searchParams }: { searchParams:
   const data = await payload.find({
     collection: activeCollection as any,
     sort: '-createdAt',
-    limit: 100,
+    limit: limit,
+    page: page,
   })
 
   return (
@@ -53,6 +58,17 @@ export default async function GalleryAdminPage({ searchParams }: { searchParams:
       </div>
 
       <GalleryUploader initialMedia={data.docs} collection={activeCollection} />
+      
+      <AdminPagination
+        page={data.page as number}
+        totalPages={data.totalPages}
+        hasPrevPage={data.hasPrevPage}
+        hasNextPage={data.hasNextPage}
+        prevPage={data.prevPage}
+        nextPage={data.nextPage}
+        baseUrl="/admin/galeri"
+        limit={limit}
+      />
     </div>
   )
 }

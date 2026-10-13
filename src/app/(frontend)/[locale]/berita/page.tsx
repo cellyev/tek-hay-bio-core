@@ -12,11 +12,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   }
 }
 
-export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Page({ params, searchParams }: { params: Promise<{ locale: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const { locale } = await params
+  const sp = await searchParams
+  
   if (locale !== 'id' && locale !== 'en') {
     notFound()
   }
 
-  return <NewsListPage locale={locale as 'id' | 'en'} />
+  const page = typeof sp.page === 'string' ? parseInt(sp.page, 10) : 1
+  const limit = typeof sp.limit === 'string' ? parseInt(sp.limit, 10) : 9
+
+  return <NewsListPage locale={locale as 'id' | 'en'} page={page} limit={limit} />
 }

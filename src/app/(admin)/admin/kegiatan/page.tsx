@@ -11,16 +11,19 @@ import { DeleteActionClient } from '@/components/admin/DeleteActionClient'
 import { BulkDeleteProvider, BulkDeleteCheckbox, BulkDeleteSelectAll, BulkDeleteButton } from '@/components/admin/BulkDelete'
 import { deleteActivityAction, deleteManyActivityAction } from './actions'
 
+import { AdminPagination } from '@/components/admin/AdminPagination'
+
 export const dynamic = 'force-dynamic'
 
-export default async function ActivitiesAdminPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  const { page } = await searchParams
+export default async function ActivitiesAdminPage({ searchParams }: { searchParams: Promise<{ page?: string, limit?: string }> }) {
+  const { page, limit } = await searchParams
   const payload = await getPayload({ config: configPromise })
   const { user } = await payload.auth({ headers: await headers() })
   if (!user) redirect('/admin/login')
 
   const currentPage = parseInt(page || '1', 10)
-  const data = await payload.find({ collection: 'activities', sort: '-createdAt', limit: 10, page: currentPage })
+  const currentLimit = parseInt(limit || '10', 10)
+  const data = await payload.find({ collection: 'activities', sort: '-createdAt', limit: currentLimit, page: currentPage })
 
   return (
     <BulkDeleteProvider>
@@ -76,6 +79,17 @@ export default async function ActivitiesAdminPage({ searchParams }: { searchPara
               </tbody>
             </table>
           </div>
+          
+          <AdminPagination
+            page={data.page as number}
+            totalPages={data.totalPages}
+            hasPrevPage={data.hasPrevPage}
+            hasNextPage={data.hasNextPage}
+            prevPage={data.prevPage}
+            nextPage={data.nextPage}
+            baseUrl="/admin/kegiatan"
+            limit={currentLimit}
+          />
         </div>
       </div>
     </BulkDeleteProvider>

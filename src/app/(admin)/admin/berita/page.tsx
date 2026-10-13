@@ -11,21 +11,24 @@ import { DeleteActionClient } from '@/components/admin/DeleteActionClient'
 import { BulkDeleteProvider, BulkDeleteCheckbox, BulkDeleteSelectAll, BulkDeleteButton } from '@/components/admin/BulkDelete'
 import { deleteNewsAction, deleteManyNewsAction } from './actions'
 
+import { AdminPagination } from '@/components/admin/AdminPagination'
+
 export const dynamic = 'force-dynamic'
 
-export default async function NewsAdminPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  const { page } = await searchParams
+export default async function NewsAdminPage({ searchParams }: { searchParams: Promise<{ page?: string, limit?: string }> }) {
+  const { page, limit } = await searchParams
   const payload = await getPayload({ config: configPromise })
   const { user } = await payload.auth({ headers: await headers() })
 
   if (!user) redirect('/admin/login')
 
   const currentPage = parseInt(page || '1', 10)
+  const currentLimit = parseInt(limit || '10', 10)
   
   const news = await payload.find({
     collection: 'posts',
     sort: '-createdAt',
-    limit: 10,
+    limit: currentLimit,
     page: currentPage,
   })
 
@@ -99,25 +102,16 @@ export default async function NewsAdminPage({ searchParams }: { searchParams: Pr
           </table>
         </div>
         
-        {news.totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
-            <span className="text-sm text-slate-500">
-              Halaman {news.page} dari {news.totalPages}
-            </span>
-            <div className="flex gap-2">
-              {news.hasPrevPage && (
-                <Link href={`/admin/berita?page=${news.prevPage}`} className="px-3 py-1 text-sm border border-slate-200 rounded-md hover:bg-slate-50">
-                  Sebelumnya
-                </Link>
-              )}
-              {news.hasNextPage && (
-                <Link href={`/admin/berita?page=${news.nextPage}`} className="px-3 py-1 text-sm border border-slate-200 rounded-md hover:bg-slate-50">
-                  Selanjutnya
-                </Link>
-              )}
-            </div>
-          </div>
-        )}
+        <AdminPagination
+          page={news.page as number}
+          totalPages={news.totalPages}
+          hasPrevPage={news.hasPrevPage}
+          hasNextPage={news.hasNextPage}
+          prevPage={news.prevPage}
+          nextPage={news.nextPage}
+          baseUrl="/admin/berita"
+          limit={currentLimit}
+        />
       </div>
       </div>
     </BulkDeleteProvider>

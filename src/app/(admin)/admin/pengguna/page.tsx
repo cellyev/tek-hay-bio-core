@@ -1,15 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import Link from 'next/link'
+import { AdminPagination } from '@/components/admin/AdminPagination'
 
 export const dynamic = 'force-dynamic'
 
-export default async function PenggunaPage() {
+export default async function PenggunaPage({ searchParams }: { searchParams: Promise<{ page?: string, limit?: string }> }) {
+  const { page, limit } = await searchParams
   const payload = await getPayload({ config: configPromise })
   const { user } = await payload.auth({ headers: await headers() })
 
@@ -27,9 +27,13 @@ export default async function PenggunaPage() {
     )
   }
 
+  const currentPage = parseInt(page || '1', 10)
+  const currentLimit = parseInt(limit || '50', 10)
+
   const users = await payload.find({
     collection: 'users',
-    limit: 50,
+    limit: currentLimit,
+    page: currentPage,
   })
 
   return (
@@ -62,6 +66,18 @@ export default async function PenggunaPage() {
             ))}
           </tbody>
         </table>
+        
+        <AdminPagination
+          page={users.page as number}
+          totalPages={users.totalPages}
+          hasPrevPage={users.hasPrevPage}
+          hasNextPage={users.hasNextPage}
+          prevPage={users.prevPage}
+          nextPage={users.nextPage}
+          baseUrl="/admin/pengguna"
+          limit={currentLimit}
+        />
+        
         <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
           <p className="text-sm text-slate-600">Pembuatan pengguna baru dapat dilakukan melalui Payload Admin.</p>
           <Link href="/admin-payload/collections/users/create" className="text-sm font-medium text-blue-600 hover:underline">

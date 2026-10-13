@@ -1,4 +1,4 @@
-﻿import { getPayload } from 'payload'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import type { CMSRecord } from '@/types'
 
@@ -16,7 +16,7 @@ export async function getGlobal(slug: 'history' | 'site-settings' | 'contact-inf
   }
 }
 
-export async function getCollection(collection: 'posts' | 'activities' | 'services' | 'media' | 'gallery-media', locale: 'id' | 'en', query = {}): Promise<CMSRecord[]> {
+export async function getCollection(collection: 'posts' | 'activities' | 'services' | 'media' | 'gallery-media', locale: 'id' | 'en', query = {}): Promise<{ docs: CMSRecord[], totalDocs: number, totalPages: number, page: number }> {
   try {
     const payload = await getPayload({ config: configPromise })
     const data = await payload.find({
@@ -24,10 +24,15 @@ export async function getCollection(collection: 'posts' | 'activities' | 'servic
       locale,
       ...query
     })
-    return data.docs as CMSRecord[]
+    return {
+      docs: data.docs as CMSRecord[],
+      totalDocs: data.totalDocs || 0,
+      totalPages: data.totalPages || 1,
+      page: data.page || 1,
+    }
   } catch (error) {
     console.error(`Error fetching collection ${collection}:`, error)
-    return []
+    return { docs: [], totalDocs: 0, totalPages: 1, page: 1 }
   }
 }
 

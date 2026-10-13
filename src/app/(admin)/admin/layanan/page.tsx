@@ -11,16 +11,19 @@ import { DeleteActionClient } from '@/components/admin/DeleteActionClient'
 import { BulkDeleteProvider, BulkDeleteCheckbox, BulkDeleteSelectAll, BulkDeleteButton } from '@/components/admin/BulkDelete'
 import { deleteServiceAction, deleteManyServiceAction } from './actions'
 
+import { AdminPagination } from '@/components/admin/AdminPagination'
+
 export const dynamic = 'force-dynamic'
 
-export default async function ServicesAdminPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  const { page } = await searchParams
+export default async function ServicesAdminPage({ searchParams }: { searchParams: Promise<{ page?: string, limit?: string }> }) {
+  const { page, limit } = await searchParams
   const payload = await getPayload({ config: configPromise })
   const { user } = await payload.auth({ headers: await headers() })
   if (!user) redirect('/admin/login')
 
   const currentPage = parseInt(page || '1', 10)
-  const data = await payload.find({ collection: 'services', sort: 'sortOrder', limit: 20, page: currentPage })
+  const currentLimit = parseInt(limit || '20', 10)
+  const data = await payload.find({ collection: 'services', sort: 'sortOrder', limit: currentLimit, page: currentPage })
 
   return (
     <BulkDeleteProvider>
@@ -74,6 +77,17 @@ export default async function ServicesAdminPage({ searchParams }: { searchParams
               </tbody>
             </table>
           </div>
+          
+          <AdminPagination
+            page={data.page as number}
+            totalPages={data.totalPages}
+            hasPrevPage={data.hasPrevPage}
+            hasNextPage={data.hasNextPage}
+            prevPage={data.prevPage}
+            nextPage={data.nextPage}
+            baseUrl="/admin/layanan"
+            limit={currentLimit}
+          />
         </div>
       </div>
     </BulkDeleteProvider>

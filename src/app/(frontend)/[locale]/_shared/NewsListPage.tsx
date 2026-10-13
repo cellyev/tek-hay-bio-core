@@ -5,11 +5,14 @@ import { Container, Section } from '@/components/ui/Layout'
 import { MediaImage } from '@/components/ui/MediaImage'
 import type { CMSRecord } from '@/types'
 import Link from 'next/link'
+import { Pagination } from '@/components/ui/Pagination'
 
-export async function NewsListPage({ locale }: { locale: 'id' | 'en' }) {
-  const posts = await getCollection('posts', locale, { 
+export async function NewsListPage({ locale, page = 1, limit = 9 }: { locale: 'id' | 'en', page?: number, limit?: number }) {
+  const { docs: posts, totalPages, page: currentPage } = await getCollection('posts', locale, { 
     where: { status: { equals: 'published' } },
-    sort: '-publishedAt'
+    sort: '-publishedAt',
+    page,
+    limit,
   })
 
   return (
@@ -25,25 +28,33 @@ export async function NewsListPage({ locale }: { locale: 'id' | 'en' }) {
                {locale === 'id' ? 'Belum ada berita.' : 'No news available.'}
              </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post) => (
-                <Link href={`/${locale}/${locale === 'id' ? 'berita' : 'news'}/${post.slug}`} key={post.id as string} className="group space-y-4">
-                  <div className="aspect-[3/2] relative bg-stone-100 rounded-lg overflow-hidden border border-stone-200">
-                    <MediaImage media={post.featuredImage as CMSRecord} fill sizes="(max-width: 768px) 100vw, 33vw" className="transition-transform duration-500 group-hover:scale-105" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-xs text-stone-500">
-                      {post.publishedAt ? new Date(post.publishedAt as string).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
-                      {Boolean(post.category) && <span className="ml-2 px-2 py-1 bg-stone-200 rounded-full text-stone-700">{typeof post.category === 'string' ? post.category : ((post.category as any)?.title?.id || (post.category as any)?.title?.en || (post.category as any)?.title || '')}</span>}
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {posts.map((post) => (
+                  <Link href={`/${locale}/${locale === 'id' ? 'berita' : 'news'}/${post.slug}`} key={post.id as string} className="group space-y-4">
+                    <div className="aspect-[3/2] relative bg-stone-100 rounded-lg overflow-hidden border border-stone-200">
+                      <MediaImage media={post.featuredImage as CMSRecord} fill sizes="(max-width: 768px) 100vw, 33vw" className="transition-transform duration-500 group-hover:scale-105" />
                     </div>
-                    <h2 className="font-bold text-xl text-stone-900 group-hover:text-primary transition-colors line-clamp-2">
-                      {post.title as string}
-                    </h2>
-                    <p className="text-stone-600 line-clamp-3 text-sm">{post.excerpt as string}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                    <div className="space-y-2">
+                      <div className="text-xs text-stone-500">
+                        {post.publishedAt ? new Date(post.publishedAt as string).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
+                        {Boolean(post.category) && <span className="ml-2 px-2 py-1 bg-stone-200 rounded-full text-stone-700">{typeof post.category === 'string' ? post.category : ((post.category as any)?.title?.id || (post.category as any)?.title?.en || (post.category as any)?.title || '')}</span>}
+                      </div>
+                      <h2 className="font-bold text-xl text-stone-900 group-hover:text-primary transition-colors line-clamp-2">
+                        {post.title as string}
+                      </h2>
+                      <p className="text-stone-600 line-clamp-3 text-sm">{post.excerpt as string}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <Pagination 
+                totalPages={totalPages} 
+                currentPage={currentPage} 
+                baseUrl={`/${locale}/${locale === 'id' ? 'berita' : 'news'}`} 
+                limit={limit} 
+              />
+            </>
           )}
         </Container>
       </Section>
