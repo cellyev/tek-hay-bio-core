@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsx --test tests/unit/activities.test.mjs tests/unit/albums.test.mjs tests/unit/calendar.test.mjs tests/unit/alternateSlugs.test.mjs"
+    "test": "tsx --test tests/unit/activities.test.mjs tests/unit/albums.test.mjs tests/unit/calendar.test.mjs tests/unit/alternateSlugs.test.mjs tests/unit/pagination.test.mjs",
+    "seed:activities": "tsx scripts/import-activities.ts"
   },
   "dependencies": {
     "@lexical/code": "^0.50.0",

@@ -70,6 +70,8 @@ export default async function PenggunaPage({ searchParams }: { searchParams: Pro
         <AdminPagination
           page={users.page as number}
           totalPages={users.totalPages}
+          totalDocs={users.totalDocs}
+          itemName="pengguna"
           hasPrevPage={users.hasPrevPage}
           hasNextPage={users.hasNextPage}
           prevPage={users.prevPage}

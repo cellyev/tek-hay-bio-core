@@ -63,18 +63,27 @@ export default async function ActivitiesAdminPage({
 
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
+            <table className="w-full text-left text-sm text-slate-600 min-w-[1100px] table-fixed">
+              <colgroup>
+                <col className="w-12" />
+                <col className="w-[23%]" />
+                <col className="w-[16%]" />
+                <col className="w-[24%]" />
+                <col className="w-[25%]" />
+                <col className="w-[12%]" />
+                <col className="w-20" />
+              </colgroup>
               <thead className="bg-slate-50 text-slate-900 border-b border-slate-200">
                 <tr>
-                  <th className="px-6 py-4 font-medium w-12">
+                  <th className="px-4 py-4 font-medium w-12 text-center">
                     <BulkDeleteSelectAll allIds={data.docs.map((d: any) => d.id)} />
                   </th>
-                  <th className="px-6 py-4 font-medium">Judul Kegiatan</th>
-                  <th className="px-6 py-4 font-medium">Kategori</th>
-                  <th className="px-6 py-4 font-medium">Jadwal Pelaksanaan</th>
-                  <th className="px-6 py-4 font-medium">Status Jadwal</th>
-                  <th className="px-6 py-4 font-medium">Publikasi</th>
-                  <th className="px-6 py-4 font-medium text-right">Aksi</th>
+                  <th className="px-4 py-4 font-medium">Judul Kegiatan</th>
+                  <th className="px-4 py-4 font-medium">Kategori</th>
+                  <th className="px-4 py-4 font-medium">Jadwal Pelaksanaan</th>
+                  <th className="px-4 py-4 font-medium">Status Jadwal</th>
+                  <th className="px-4 py-4 font-medium text-center">Publikasi</th>
+                  <th className="px-4 py-4 font-medium text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -93,32 +102,38 @@ export default async function ActivitiesAdminPage({
 
                     return (
                       <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-4 text-center">
                           <BulkDeleteCheckbox id={item.id} />
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="font-medium text-slate-900">{item.title || 'Tanpa Judul'}</div>
+                        <td className="px-4 py-4">
+                          <div className="font-medium text-slate-900 break-words line-clamp-2" title={item.title || 'Tanpa Judul'}>
+                            {item.title || 'Tanpa Judul'}
+                          </div>
                           {item.relatedDeity && (
-                            <div className="text-xs text-slate-500 mt-0.5">Dewa: {item.relatedDeity}</div>
+                            <div className="text-xs text-slate-500 mt-0.5 truncate" title={`Dewa: ${item.relatedDeity}`}>
+                              Dewa: {item.relatedDeity}
+                            </div>
                           )}
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-md bg-stone-100 text-stone-700 border border-stone-200">
+                        <td className="px-4 py-4">
+                          <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-md bg-stone-100 text-stone-700 border border-stone-200 whitespace-nowrap">
                             {categoryLabel}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-4">
                           <div className="space-y-1">
                             {gregorianDate ? (
                               <div className="flex items-center gap-1.5 text-xs text-slate-700">
                                 <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                <span>{gregorianDate}</span>
+                                <span className="truncate" title={gregorianDate}>{gregorianDate}</span>
                               </div>
                             ) : null}
                             {lunarDate ? (
-                              <div className="flex items-center gap-1.5 text-xs text-amber-700">
-                                <Moon className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                                <span>{lunarDate}</span>
+                              <div className="flex items-start gap-1.5 text-xs text-amber-700">
+                                <Moon className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                                <span className="line-clamp-2 leading-relaxed" title={lunarDate}>
+                                  {lunarDate}
+                                </span>
                               </div>
                             ) : null}
                             {!gregorianDate && !lunarDate ? (
@@ -126,16 +141,16 @@ export default async function ActivitiesAdminPage({
                             ) : null}
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-4">
                           <span
-                            className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-full border ${scheduleStatusObj.badgeClass}`}
+                            className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full border whitespace-nowrap ${scheduleStatusObj.badgeClass}`}
                           >
                             {scheduleStatusObj.label.id}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-4 text-center">
                           <span
-                            className={`px-2.5 py-1 text-xs font-medium rounded-full ${
+                            className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap ${
                               item.status === 'published'
                                 ? 'bg-green-100 text-green-800'
                                 : 'bg-slate-100 text-slate-800'
@@ -144,7 +159,7 @@ export default async function ActivitiesAdminPage({
                             {item.status === 'published' ? 'Publik' : 'Draft'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right space-x-2">
+                        <td className="px-4 py-4 text-right whitespace-nowrap space-x-1">
                           <Link
                             href={`/admin/kegiatan/${item.id}`}
                             className="inline-flex items-center justify-center p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
@@ -165,6 +180,8 @@ export default async function ActivitiesAdminPage({
           <AdminPagination
             page={data.page as number}
             totalPages={data.totalPages}
+            totalDocs={data.totalDocs}
+            itemName="kegiatan"
             hasPrevPage={data.hasPrevPage}
             hasNextPage={data.hasNextPage}
             prevPage={data.prevPage}

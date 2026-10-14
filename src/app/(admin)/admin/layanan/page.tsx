@@ -81,6 +81,8 @@ export default async function ServicesAdminPage({ searchParams }: { searchParams
           <AdminPagination
             page={data.page as number}
             totalPages={data.totalPages}
+            totalDocs={data.totalDocs}
+            itemName="layanan"
             hasPrevPage={data.hasPrevPage}
             hasNextPage={data.hasNextPage}
             prevPage={data.prevPage}

@@ -6,7 +6,7 @@ import { Container, Section } from '@/components/ui/Layout'
 import { MediaImage } from '@/components/ui/MediaImage'
 import type { CMSRecord } from '@/types'
 import Link from 'next/link'
-import { Pagination } from '@/components/ui/Pagination'
+import { Pagination, PaginationToolbar } from '@/components/ui/Pagination'
 import {
   ACTIVITY_CATEGORIES,
   getActivityCategoryLabel,
@@ -32,7 +32,7 @@ export async function ActivitiesListPage({
     where.category = { equals: category }
   }
 
-  const { docs: activities, totalPages, page: currentPage } = await getCollection('activities', locale, {
+  const { docs: activities, totalDocs, totalPages, page: currentPage } = await getCollection('activities', locale, {
     where,
     sort: '-date',
     page,
@@ -137,6 +137,15 @@ export async function ActivitiesListPage({
             </div>
           ) : (
             <>
+              <PaginationToolbar
+                currentPage={currentPage}
+                totalDocs={totalDocs}
+                limit={limit}
+                locale={locale}
+                itemName={locale === 'id' ? 'kegiatan' : 'activities'}
+                pageSizeOptions={[6, 9, 12, 18]}
+                baseUrl={category ? `${baseUrl}?category=${category}` : baseUrl}
+              />
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {activities.map((activity: any) => {
                   const gregorianDate = formatGregorianDateRange(activity.date, activity.endDate, locale)
@@ -273,8 +282,12 @@ export async function ActivitiesListPage({
               <Pagination
                 totalPages={totalPages}
                 currentPage={currentPage}
+                totalDocs={totalDocs}
                 baseUrl={category ? `${baseUrl}?category=${category}` : baseUrl}
                 limit={limit}
+                locale={locale}
+                itemName={locale === 'id' ? 'kegiatan' : 'activities'}
+                pageSizeOptions={[6, 9, 12, 18]}
               />
             </>
           )}

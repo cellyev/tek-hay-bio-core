@@ -88,6 +88,9 @@ export default async function GalleryAdminPage({
         <AdminPagination
           page={mediaData.page as number}
           totalPages={mediaData.totalPages}
+          totalDocs={mediaData.totalDocs}
+          itemName="media"
+          pageSizeOptions={[20, 50, 100, 200]}
           hasPrevPage={mediaData.hasPrevPage}
           hasNextPage={mediaData.hasNextPage}
           prevPage={mediaData.prevPage}
@@ -268,6 +271,9 @@ export default async function GalleryAdminPage({
           <AdminPagination
             page={albumData.page as number}
             totalPages={albumData.totalPages}
+            totalDocs={albumData.totalDocs}
+            itemName="album"
+            pageSizeOptions={[10, 20, 50, 100]}
             hasPrevPage={albumData.hasPrevPage}
             hasNextPage={albumData.hasNextPage}
             prevPage={albumData.prevPage}

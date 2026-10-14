@@ -320,85 +320,184 @@ export function ActivitiesForm({ initialData }: { initialData?: any }) {
                 Informasi Kalender Imlek (Lunar)
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">Pola Aturan Imlek</label>
-                  <select
-                    name="lunarRuleType"
-                    value={formData.lunarRuleType}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
-                  >
-                    {ACTIVITY_LUNAR_RULES.map((rule) => (
-                      <option key={rule.value} value={rule.value}>
-                        {rule.label[activeTab]}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Tanggal Imlek (1–30)
-                  </label>
-                  <input
-                    type="number"
-                    name="lunarDay"
-                    min="1"
-                    max="30"
-                    value={formData.lunarDay}
-                    onChange={handleChange}
-                    placeholder="Contoh: 24"
-                    disabled={formData.lunarRuleType === 'first_half' || formData.lunarRuleType === 'second_half' || formData.lunarRuleType === 'none'}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Bulan Imlek (1–12)
-                  </label>
-                  <input
-                    type="number"
-                    name="lunarMonth"
-                    min="1"
-                    max="12"
-                    value={formData.lunarMonth}
-                    onChange={handleChange}
-                    placeholder="Contoh: 12"
-                    disabled={formData.lunarRuleType === 'none'}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white disabled:bg-slate-100 disabled:text-slate-400"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="isLeapMonth"
-                  name="isLeapMonth"
-                  checked={formData.isLeapMonth}
-                  onChange={handleChange}
-                  className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 h-4 w-4"
-                />
-                <label htmlFor="isLeapMonth" className="text-xs text-slate-700 font-medium cursor-pointer">
-                  Bulan Kabisat Lunar (Runyue / 闰月)
-                </label>
-              </div>
-
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Keterangan Periode Khusus Imlek ({activeTab.toUpperCase()})
-                </label>
-                <input
-                  type="text"
-                  name="lunarPeriodDescription"
-                  value={localizedData.lunarPeriodDescription[activeTab]}
-                  onChange={handleLocalizedChange}
-                  placeholder="Misal: 'Paruh pertama bulan 7 Imlek' atau 'Sepuluh hari sebelum dan sesudah 5 April (Ceng Beng)'"
+                <label className="block text-xs font-medium text-slate-700 mb-1">Pola Aturan Imlek</label>
+                <select
+                  name="lunarRuleType"
+                  value={formData.lunarRuleType}
+                  onChange={handleChange}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
-                />
+                >
+                  {ACTIVITY_LUNAR_RULES.map((rule) => (
+                    <option key={rule.value} value={rule.value}>
+                      {rule.label[activeTab]}
+                    </option>
+                  ))}
+                </select>
               </div>
+
+              {formData.lunarRuleType === 'none' ? (
+                <div className="p-3 bg-stone-50 rounded-lg border border-stone-200 text-xs text-stone-600 flex items-center gap-2">
+                  <Info className="w-4 h-4 text-stone-400 shrink-0" />
+                  <span>Kegiatan ini tidak menggunakan acuan penanggalan Imlek (hanya penanggalan Masehi).</span>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-1">
+                  {/* Exact Date */}
+                  {formData.lunarRuleType === 'exact_date' && (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 mb-1">
+                            Tanggal Imlek (1–30)
+                          </label>
+                          <input
+                            type="number"
+                            name="lunarDay"
+                            min="1"
+                            max="30"
+                            value={formData.lunarDay}
+                            onChange={handleChange}
+                            placeholder="Contoh: 24"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 mb-1">
+                            Bulan Imlek (1–12)
+                          </label>
+                          <input
+                            type="number"
+                            name="lunarMonth"
+                            min="1"
+                            max="12"
+                            value={formData.lunarMonth}
+                            onChange={handleChange}
+                            placeholder="Contoh: 12"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-1">
+                        <input
+                          type="checkbox"
+                          id="isLeapMonth"
+                          name="isLeapMonth"
+                          checked={formData.isLeapMonth}
+                          onChange={handleChange}
+                          className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 h-4 w-4"
+                        />
+                        <label htmlFor="isLeapMonth" className="text-xs text-slate-700 font-medium cursor-pointer">
+                          Bulan Kabisat Lunar (Runyue / 闰月)
+                        </label>
+                      </div>
+                    </>
+                  )}
+
+                  {/* First Half / Second Half */}
+                  {(formData.lunarRuleType === 'first_half' || formData.lunarRuleType === 'second_half') && (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 mb-1">
+                            Bulan Imlek (1–12)
+                          </label>
+                          <input
+                            type="number"
+                            name="lunarMonth"
+                            min="1"
+                            max="12"
+                            value={formData.lunarMonth}
+                            onChange={handleChange}
+                            placeholder="Contoh: 7"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+                          />
+                        </div>
+
+                        <div className="flex flex-col justify-end">
+                          <div className="p-2.5 bg-amber-100/70 rounded-lg border border-amber-200 text-xs text-amber-800 font-medium">
+                            {formData.lunarRuleType === 'first_half'
+                              ? '📅 Rentang otomatis: Tanggal 1 s/d 15'
+                              : '📅 Rentang otomatis: Tanggal 16 s/d 30'}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-1">
+                        <input
+                          type="checkbox"
+                          id="isLeapMonth"
+                          name="isLeapMonth"
+                          checked={formData.isLeapMonth}
+                          onChange={handleChange}
+                          className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 h-4 w-4"
+                        />
+                        <label htmlFor="isLeapMonth" className="text-xs text-slate-700 font-medium cursor-pointer">
+                          Bulan Kabisat Lunar (Runyue / 闰月)
+                        </label>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Custom Period */}
+                  {formData.lunarRuleType === 'custom_period' && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 mb-1">
+                            Bulan Imlek (Opsional, 1–12)
+                          </label>
+                          <input
+                            type="number"
+                            name="lunarMonth"
+                            min="1"
+                            max="12"
+                            value={formData.lunarMonth}
+                            onChange={handleChange}
+                            placeholder="Kosongkan jika rentang tidak terikat bulan"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+                          />
+                        </div>
+
+                        <div className="flex items-end pb-2">
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              id="isLeapMonth"
+                              name="isLeapMonth"
+                              checked={formData.isLeapMonth}
+                              onChange={handleChange}
+                              className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 h-4 w-4"
+                            />
+                            <label htmlFor="isLeapMonth" className="text-xs text-slate-700 font-medium cursor-pointer">
+                              Bulan Kabisat Lunar (Runyue / 闰月)
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
+                          Keterangan Periode Khusus Imlek ({activeTab.toUpperCase()})
+                        </label>
+                        <input
+                          type="text"
+                          name="lunarPeriodDescription"
+                          value={localizedData.lunarPeriodDescription[activeTab]}
+                          onChange={handleLocalizedChange}
+                          placeholder="Misal: 'Sepuluh hari sebelum dan sesudah 5 April (Ceng Beng)'"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+                        />
+                        <div className="text-[11px] text-slate-500 mt-1">
+                          Deskripsikan penanggalan adat atau rentang pelaksanaan kegiatan dengan jelas.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Waktu Masehi Aktual */}

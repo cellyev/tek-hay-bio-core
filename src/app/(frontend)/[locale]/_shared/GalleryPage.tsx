@@ -6,7 +6,7 @@ import { Container, Section } from '@/components/ui/Layout'
 import { MediaImage } from '@/components/ui/MediaImage'
 import type { CMSRecord } from '@/types'
 import Link from 'next/link'
-import { Pagination } from '@/components/ui/Pagination'
+import { Pagination, PaginationToolbar } from '@/components/ui/Pagination'
 import {
   ALBUM_CATEGORIES,
   getAlbumCategoryLabel,
@@ -32,7 +32,7 @@ export async function GalleryPage({
   }
 
   // Fetch published albums
-  const { docs: albums, totalPages, page: currentPage } = await getCollection('albums', locale, {
+  const { docs: albums, totalDocs, totalPages, page: currentPage } = await getCollection('albums', locale, {
     where,
     sort: '-eventDate',
     page,
@@ -113,6 +113,15 @@ export async function GalleryPage({
             </div>
           ) : (
             <>
+              <PaginationToolbar
+                currentPage={currentPage}
+                totalDocs={totalDocs}
+                limit={limit}
+                locale={locale}
+                itemName={locale === 'id' ? 'album' : 'albums'}
+                pageSizeOptions={[6, 12, 18, 24]}
+                baseUrl={category ? `${baseUrl}?category=${category}` : baseUrl}
+              />
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {albums.map((album: any) => {
                   const categoryLabel = getAlbumCategoryLabel(album.category, locale)
@@ -194,8 +203,12 @@ export async function GalleryPage({
               <Pagination
                 totalPages={totalPages}
                 currentPage={currentPage}
+                totalDocs={totalDocs}
                 baseUrl={category ? `${baseUrl}?category=${category}` : baseUrl}
                 limit={limit}
+                locale={locale}
+                itemName={locale === 'id' ? 'album' : 'albums'}
+                pageSizeOptions={[6, 12, 18, 24]}
               />
             </>
           )}

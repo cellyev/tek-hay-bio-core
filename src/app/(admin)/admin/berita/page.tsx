@@ -105,6 +105,8 @@ export default async function NewsAdminPage({ searchParams }: { searchParams: Pr
         <AdminPagination
           page={news.page as number}
           totalPages={news.totalPages}
+          totalDocs={news.totalDocs}
+          itemName="berita"
           hasPrevPage={news.hasPrevPage}
           hasNextPage={news.hasNextPage}
           prevPage={news.prevPage}

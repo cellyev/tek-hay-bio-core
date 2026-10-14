@@ -5,15 +5,17 @@ import { Container, Section } from '@/components/ui/Layout'
 import { MediaImage } from '@/components/ui/MediaImage'
 import { RichText } from '@/components/ui/RichText'
 import type { CMSRecord } from '@/types'
-import { Pagination } from '@/components/ui/Pagination'
+import { Pagination, PaginationToolbar } from '@/components/ui/Pagination'
 
 export async function ServicesPage({ locale, page = 1, limit = 10 }: { locale: 'id' | 'en', page?: number, limit?: number }) {
-  const { docs: services, totalPages, page: currentPage } = await getCollection('services', locale, { 
+  const { docs: services, totalDocs, totalPages, page: currentPage } = await getCollection('services', locale, { 
     where: { status: { equals: 'published' } },
     sort: 'sortOrder',
     page,
     limit,
   })
+
+  const baseUrl = `/${locale}/${locale === 'id' ? 'layanan' : 'services'}`
 
   return (
     <>
@@ -29,6 +31,15 @@ export async function ServicesPage({ locale, page = 1, limit = 10 }: { locale: '
              </div>
           ) : (
             <>
+              <PaginationToolbar
+                currentPage={currentPage}
+                totalDocs={totalDocs}
+                limit={limit}
+                locale={locale}
+                itemName={locale === 'id' ? 'layanan' : 'services'}
+                pageSizeOptions={[5, 10, 15, 20]}
+                baseUrl={baseUrl}
+              />
               <div className="space-y-16">
                 {services.map((service, idx) => (
                   <div key={service.id as string} className={`flex flex-col md:flex-row gap-8 items-start ${idx % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
@@ -57,8 +68,12 @@ export async function ServicesPage({ locale, page = 1, limit = 10 }: { locale: '
               <Pagination 
                 totalPages={totalPages} 
                 currentPage={currentPage} 
-                baseUrl={`/${locale}/${locale === 'id' ? 'layanan' : 'services'}`} 
+                totalDocs={totalDocs}
+                baseUrl={baseUrl} 
                 limit={limit} 
+                locale={locale}
+                itemName={locale === 'id' ? 'layanan' : 'services'}
+                pageSizeOptions={[5, 10, 15, 20]}
               />
             </>
           )}

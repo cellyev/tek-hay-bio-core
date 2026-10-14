@@ -82,6 +82,8 @@ export default async function CategoriesPage({ searchParams }: { searchParams: P
         <AdminPagination
           page={data.page as number}
           totalPages={data.totalPages}
+          totalDocs={data.totalDocs}
+          itemName="kategori"
           hasPrevPage={data.hasPrevPage}
           hasNextPage={data.hasNextPage}
           prevPage={data.prevPage}

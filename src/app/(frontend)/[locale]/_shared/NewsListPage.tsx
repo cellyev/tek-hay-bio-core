@@ -5,15 +5,17 @@ import { Container, Section } from '@/components/ui/Layout'
 import { MediaImage } from '@/components/ui/MediaImage'
 import type { CMSRecord } from '@/types'
 import Link from 'next/link'
-import { Pagination } from '@/components/ui/Pagination'
+import { Pagination, PaginationToolbar } from '@/components/ui/Pagination'
 
 export async function NewsListPage({ locale, page = 1, limit = 9 }: { locale: 'id' | 'en', page?: number, limit?: number }) {
-  const { docs: posts, totalPages, page: currentPage } = await getCollection('posts', locale, { 
+  const { docs: posts, totalDocs, totalPages, page: currentPage } = await getCollection('posts', locale, { 
     where: { status: { equals: 'published' } },
     sort: '-publishedAt',
     page,
     limit,
   })
+
+  const baseUrl = `/${locale}/${locale === 'id' ? 'berita' : 'news'}`
 
   return (
     <>
@@ -29,6 +31,15 @@ export async function NewsListPage({ locale, page = 1, limit = 9 }: { locale: 'i
              </div>
           ) : (
             <>
+              <PaginationToolbar
+                currentPage={currentPage}
+                totalDocs={totalDocs}
+                limit={limit}
+                locale={locale}
+                itemName={locale === 'id' ? 'berita' : 'news'}
+                pageSizeOptions={[6, 9, 12, 18]}
+                baseUrl={baseUrl}
+              />
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {posts.map((post) => (
                   <Link href={`/${locale}/${locale === 'id' ? 'berita' : 'news'}/${post.slug}`} key={post.id as string} className="group space-y-4">
@@ -51,8 +62,12 @@ export async function NewsListPage({ locale, page = 1, limit = 9 }: { locale: 'i
               <Pagination 
                 totalPages={totalPages} 
                 currentPage={currentPage} 
-                baseUrl={`/${locale}/${locale === 'id' ? 'berita' : 'news'}`} 
+                totalDocs={totalDocs}
+                baseUrl={baseUrl} 
                 limit={limit} 
+                locale={locale}
+                itemName={locale === 'id' ? 'berita' : 'news'}
+                pageSizeOptions={[6, 9, 12, 18]}
               />
             </>
           )}
